@@ -28,6 +28,14 @@ module.exports = {
     "@typescript-eslint/await-thenable": "warn",
     "@typescript-eslint/ban-ts-comment": "error",
     "@typescript-eslint/consistent-generic-constructors": "warn",
-    "@typescript-eslint/ban-types": "error"
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "Function": false
+        },
+        "extendDefaults": true
+      }
+    ]
   },
 };
