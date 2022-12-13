@@ -12,7 +12,9 @@ export class Gallery {
   })
   public isPrivate: boolean;
 
-  @OneToMany(() => MediaFile, mediaFile => mediaFile.gallery)
+  @OneToMany(() => MediaFile, mediaFile => mediaFile.gallery, {
+    cascade: ['insert'],
+  })
   public mediaFiles: MediaFile[];
 
   public static createOne(options: CreateGalleryOptions): Gallery {
