@@ -6,6 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "migration:gen": "yarn typeorm migration:generate -d ./typeorm/ormconfig.ts -o",
+    "migration:run": "yarn typeorm migration:run -d ./typeorm/ormconfig.ts",
+    "migration:revert": "yarn typeorm migration:revert -d ./typeorm/ormconfig.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "prepare": "husky install",
