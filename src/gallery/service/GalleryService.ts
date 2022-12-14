@@ -1,11 +1,15 @@
 import { GalleryServiceInterface } from './GalleryServiceInterface';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { MediaFile } from '../entity/MediaFile';
 import { GalleryRepoInterface } from '../repository/GalleryRepoInterface';
+import { GALLERY_REPO } from '../repository/GalleryRepoProvider';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
-  constructor(private readonly galleryRepo: GalleryRepoInterface) {}
+  constructor(
+    @Inject(GALLERY_REPO)
+    private readonly galleryRepo: GalleryRepoInterface,
+  ) {}
 
   public async addFileToGallery(
     galleryId: number,
