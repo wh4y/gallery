@@ -23,6 +23,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
           database: configService.get('DB_NAME'),
           logging: true,
           migrationsRun: true,
+          migrations: ['./dist/typeorm/migrations/*{.ts,.js}'],
         } as TypeOrmModuleOptions),
     }),
   ],
