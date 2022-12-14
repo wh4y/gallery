@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { GalleryModule } from './gallery/GalleryModule';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
           migrations: ['./dist/typeorm/migrations/*{.ts,.js}'],
         } as TypeOrmModuleOptions),
     }),
+    GalleryModule,
   ],
 })
 export class AppModule {}
