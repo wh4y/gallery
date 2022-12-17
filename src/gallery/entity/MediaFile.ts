@@ -30,20 +30,4 @@ export class MediaFile {
     onDelete: 'CASCADE',
   })
   public gallery: Gallery;
-
-  public static createOne(options: CreateMediaFileOptions): MediaFile {
-    const plain = { ...options };
-    Reflect.setPrototypeOf(plain, MediaFile);
-
-    return plain as MediaFile;
-  }
 }
-
-type CreateMediaFileOptions = Omit<
-  {
-    [P in keyof MediaFile]: MediaFile[P] extends Function
-      ? unknown
-      : MediaFile[P];
-  },
-  'id'
->;

@@ -28,18 +28,4 @@ export class Gallery {
     onDelete: 'CASCADE',
   })
   public user: User;
-
-  public static createOne(options: CreateGalleryOptions): Gallery {
-    const plain = { ...options };
-    Reflect.setPrototypeOf(plain, Gallery);
-
-    return plain as Gallery;
-  }
 }
-
-type CreateGalleryOptions = Omit<
-  {
-    [P in keyof Gallery]: Gallery[P] extends Function ? unknown : Gallery[P];
-  },
-  'id'
->;
