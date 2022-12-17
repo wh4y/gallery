@@ -6,7 +6,7 @@ export interface UserServiceInterface {
 
   removeUserById(id: number): Promise<void>;
 
-  findUserById(id: number): Promise<User>;
+  findUserById(id: number): Promise<User | null>;
 
-  findUserByEmail(email: string): Promise<User>;
+  findUserByEmail(email: string): Promise<User | null>;
 }
