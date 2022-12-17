@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { GalleryModule } from './gallery/GalleryModule';
+import { UserModule } from './user/UserModule';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -24,10 +26,14 @@ import { GalleryModule } from './gallery/GalleryModule';
           database: configService.get('DB_NAME'),
           logging: true,
           migrationsRun: true,
-          migrations: ['./dist/typeorm/migrations/*{.ts,.js}'],
+          entities: [join(__dirname, '**', 'entity', '*.{ts,js}')],
+          migrations: [
+            join(__dirname, 'typeorm', 'migrations', '**', '*{.ts, .js}'),
+          ],
         } as TypeOrmModuleOptions),
     }),
     GalleryModule,
+    UserModule,
   ],
 })
 export class AppModule {}
