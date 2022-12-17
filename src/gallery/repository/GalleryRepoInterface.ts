@@ -1,6 +1,6 @@
 import { Gallery } from '../entity/Gallery';
 
 export interface GalleryRepoInterface {
-  saveGallery(gallery: Gallery): Promise<void>;
-  findGalleryById(id: number): Promise<Gallery>;
+  save(gallery: Gallery): Promise<void>;
+  findById(id: number): Promise<Gallery>;
 }
