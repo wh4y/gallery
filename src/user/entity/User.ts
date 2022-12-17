@@ -1,6 +1,11 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Gallery } from '../../gallery/entity/Gallery';
-import { JoinColumn } from 'typeorm/browser';
 
 @Entity()
 export class User {
@@ -10,22 +15,48 @@ export class User {
   @Column({
     type: 'varchar',
   })
-  public name: string;
+  public readonly name: string;
 
   @Column({
     type: 'varchar',
     unique: true,
+    nullable: false,
   })
   public email: string;
 
   @Column({
     type: 'varchar',
+    nullable: false,
   })
-  public password: string;
+  public readonly password: string;
 
   @OneToOne(() => Gallery, gallery => gallery.user, {
     cascade: ['insert'],
+    nullable: false,
   })
   @JoinColumn()
-  public gallery: Gallery;
+  public readonly gallery: Gallery;
+
+  public static createOneWith(options: Partial<User>): User {
+    const user = { ...options };
+    Reflect.setPrototypeOf(user, User.prototype);
+
+    return user as User;
+  }
+
+  public withName(name: string): User {
+    return User.createOneWith({ ...this, name });
+  }
+
+  public withEmail(email: string): User {
+    return User.createOneWith({ ...this, email });
+  }
+
+  public withPassword(password: string): User {
+    return User.createOneWith({ ...this, password });
+  }
+
+  public withGallery(gallery: Gallery): User {
+    return User.createOneWith({ ...this, gallery });
+  }
 }
