@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { GalleryModule } from './gallery/GalleryModule';
-import { UserModule } from './user/UserModule';
 import { join } from 'path';
 
 @Module({
@@ -33,7 +32,6 @@ import { join } from 'path';
         } as TypeOrmModuleOptions),
     }),
     GalleryModule,
-    UserModule,
   ],
 })
 export class AppModule {}
