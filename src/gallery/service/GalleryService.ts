@@ -15,23 +15,23 @@ export class GalleryService implements GalleryServiceInterface {
     galleryId: number,
     file: MediaFile,
   ): Promise<void> {
-    const gallery = await this.galleryRepo.findGalleryById(galleryId);
+    const gallery = await this.galleryRepo.findById(galleryId);
     gallery.mediaFiles.push(file);
 
-    await this.galleryRepo.saveGallery(gallery);
+    await this.galleryRepo.save(gallery);
   }
 
   public async findAllFilesInGallery(galleryId: number): Promise<MediaFile[]> {
-    return (await this.galleryRepo.findGalleryById(galleryId)).mediaFiles;
+    return (await this.galleryRepo.findById(galleryId)).mediaFiles;
   }
 
   public async removeFileFromGalleryById(
     galleryId: number,
     fileId: number,
   ): Promise<void> {
-    const gallery = await this.galleryRepo.findGalleryById(galleryId);
+    const gallery = await this.galleryRepo.findById(galleryId);
     gallery.mediaFiles = gallery.mediaFiles.filter(file => file.id !== fileId);
 
-    await this.galleryRepo.saveGallery(gallery);
+    await this.galleryRepo.save(gallery);
   }
 }
