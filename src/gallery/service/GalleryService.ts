@@ -29,8 +29,10 @@ export class GalleryService implements GalleryServiceInterface {
     galleryId: number,
     fileId: number,
   ): Promise<void> {
-    const gallery = await this.galleryRepo.findById(galleryId);
-    gallery.mediaFiles = gallery.mediaFiles.filter(file => file.id !== fileId);
+    let gallery = await this.galleryRepo.findById(galleryId);
+    gallery = gallery.withMediaFiles(
+      gallery.mediaFiles.filter(file => file.id !== fileId),
+    );
 
     await this.galleryRepo.save(gallery);
   }
