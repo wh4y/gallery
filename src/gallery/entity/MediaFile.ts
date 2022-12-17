@@ -9,25 +9,52 @@ export class MediaFile {
   @Column({
     type: 'varchar',
   })
-  public publicFileName: string;
+  public readonly publicFileName: string;
 
   @Column({
     type: 'varchar',
   })
-  public localFileName: string;
+  public readonly localFileName: string;
 
   @Column({
     type: 'varchar',
   })
-  public extension: string;
+  public readonly extension: string;
 
   @Column({
     type: 'varchar',
   })
-  public filePath: string;
+  public readonly filePath: string;
 
   @ManyToOne(() => Gallery, gallery => gallery.mediaFiles, {
     onDelete: 'CASCADE',
   })
-  public gallery: Gallery;
+  public readonly gallery: Gallery;
+
+  public static createOneWith(options: Partial<MediaFile>): MediaFile {
+    const plain = { ...options };
+    Reflect.setPrototypeOf(plain, MediaFile.prototype);
+
+    return plain as MediaFile;
+  }
+
+  public withPublicFileName(publicFileName: string): MediaFile {
+    return MediaFile.createOneWith({ ...this, publicFileName });
+  }
+
+  public withLocalFileName(localFileName: string): MediaFile {
+    return MediaFile.createOneWith({ ...this, localFileName });
+  }
+
+  public withExtension(extension: string): MediaFile {
+    return MediaFile.createOneWith({ ...this, extension });
+  }
+
+  public withFilePath(filePath: string): MediaFile {
+    return MediaFile.createOneWith({ ...this, filePath });
+  }
+
+  public withGallery(gallery: Gallery): MediaFile {
+    return MediaFile.createOneWith({ ...this, gallery });
+  }
 }

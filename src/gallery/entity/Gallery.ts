@@ -17,15 +17,35 @@ export class Gallery {
     type: 'boolean',
     default: false,
   })
-  public isPrivate: boolean;
+  public readonly isPrivate: boolean;
 
   @OneToMany(() => MediaFile, mediaFile => mediaFile.gallery, {
     cascade: ['insert'],
   })
-  public mediaFiles: MediaFile[];
+  public readonly mediaFiles: MediaFile[];
 
   @OneToOne(() => User, user => user.gallery, {
     onDelete: 'CASCADE',
   })
-  public user: User;
+  public readonly user: User;
+
+  public static createOneWith(options: Partial<Gallery>): Gallery {
+    const baseObject: typeof options = { isPrivate: false, mediaFiles: [] };
+    const gallery = Object.assign(baseObject, options);
+    Reflect.setPrototypeOf(gallery, Gallery.prototype);
+
+    return gallery as Gallery;
+  }
+
+  public withIsPrivate(isPrivate: boolean): Gallery {
+    return Gallery.createOneWith({ ...this, isPrivate });
+  }
+
+  public withMediaFiles(mediaFiles: MediaFile[]): Gallery {
+    return Gallery.createOneWith({ ...this, mediaFiles });
+  }
+
+  public withUser(user: User): Gallery {
+    return Gallery.createOneWith({ ...this, user });
+  }
 }
