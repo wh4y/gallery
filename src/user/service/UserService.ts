@@ -4,10 +4,14 @@ import { Injectable } from '@nestjs/common';
 import { AddNewUserOptions } from './options';
 import { Gallery } from '../../gallery/entity/Gallery';
 import { UserRepo } from '../repository/UserRepo';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService implements UserServiceInterface {
-  constructor(private readonly userRepo: UserRepo) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: UserRepo,
+  ) {}
 
   public async addNewUser({
     email,

@@ -4,10 +4,14 @@ import { MediaFile } from '../entity/MediaFile';
 import { Gallery } from '../entity/Gallery';
 import { IncludeOptions } from './options';
 import { GalleryRepo } from '../repository/GalleryRepo';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
-  constructor(private readonly galleryRepo: GalleryRepo) {}
+  constructor(
+    @InjectRepository(Gallery)
+    private readonly galleryRepo: GalleryRepo,
+  ) {}
 
   public async findGalleryById(
     galleryId: number,
