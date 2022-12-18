@@ -10,7 +10,7 @@ export class AuthService implements AuthServiceInterface {
   constructor(private readonly userService: UserService) {}
 
   public async signIn({ email, password }: SignInOptions): Promise<User> {
-    const user = await this.userService.findUserByEmail(email);
+    const user = await this.userService.findUserByEmail(email, true);
     if (!user) throw Error('Incorrect password or email!');
 
     const isPassportValid = await this.comparePasswords(
@@ -33,7 +33,7 @@ export class AuthService implements AuthServiceInterface {
       name,
     });
 
-    return (await this.userService.findUserByEmail(email)) as User;
+    return (await this.userService.findUserByEmail(email, true)) as User;
   }
 
   private async comparePasswords(

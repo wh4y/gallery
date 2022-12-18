@@ -34,8 +34,13 @@ export class UserService implements UserServiceInterface {
   public async findUserById(id: number): Promise<User | null> {
     return await this.userRepo.findById(id);
   }
-  public async findUserByEmail(email: string): Promise<User | null> {
-    return await this.userRepo.findByEmail(email);
+  public async findUserByEmail(
+    email: string,
+    includeGallery = false,
+  ): Promise<User | null> {
+    return await this.userRepo.findByEmail(email, {
+      relations: { gallery: includeGallery },
+    });
   }
 
   public async removeUserById(id: number): Promise<void> {
