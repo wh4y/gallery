@@ -1,9 +1,11 @@
 import { MediaFile } from '../entity/MediaFile';
+import { Gallery } from '../entity/Gallery';
+import { IncludeOptions } from './options';
 
 export interface GalleryServiceInterface {
   addFileToGallery(galleryId: number, file: MediaFile): Promise<void>;
 
   removeFileFromGalleryById(galleryId: number, fileId: number): Promise<void>;
 
-  findAllFilesInGallery(galleryId: number): Promise<MediaFile[]>;
+  findGalleryById(galleryId: number, include: IncludeOptions): Promise<Gallery>;
 }
