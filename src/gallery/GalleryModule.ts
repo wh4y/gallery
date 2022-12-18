@@ -4,15 +4,9 @@ import { Gallery } from './entity/Gallery';
 import { MediaFile } from './entity/MediaFile';
 import { GalleryService } from './service/GalleryService';
 import { GalleryController } from './controller/GalleryController';
-import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Gallery, MediaFile]),
-    MulterModule.register({
-      dest: './upload',
-    }),
-  ],
+  imports: [TypeOrmModule.forFeature([Gallery, MediaFile])],
   providers: [GalleryService],
   controllers: [GalleryController],
 })
