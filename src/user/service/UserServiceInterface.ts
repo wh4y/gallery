@@ -6,7 +6,10 @@ export interface UserServiceInterface {
 
   removeUserById(id: number): Promise<void>;
 
-  findUserById(id: number): Promise<User | null>;
+  findUserById(id: number, includeGallery?: boolean): Promise<User | null>;
 
-  findUserByEmail(email: string): Promise<User | null>;
+  findUserByEmail(
+    email: string,
+    includeGallery?: boolean,
+  ): Promise<User | null>;
 }

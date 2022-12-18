@@ -1,26 +1,20 @@
 import { UserServiceInterface } from './UserServiceInterface';
 import { User } from '../entity/User';
-import { Inject, Injectable } from '@nestjs/common';
-import { USER_REPO } from '../repository/UserRepoProvider';
-import { UserRepoInterface } from '../repository/UserRepoInterface';
+import { Injectable } from '@nestjs/common';
 import { AddNewUserOptions } from './options';
 import { Gallery } from '../../gallery/entity/Gallery';
+import { UserRepo } from '../repository/UserRepo';
 
 @Injectable()
 export class UserService implements UserServiceInterface {
-  constructor(
-    @Inject(USER_REPO)
-    private readonly userRepo: UserRepoInterface,
-  ) {}
+  constructor(private readonly userRepo: UserRepo) {}
 
   public async addNewUser({
     email,
     name,
     password,
   }: AddNewUserOptions): Promise<void> {
-    const doesUserAlreadyExist = Boolean(
-      await this.userRepo.findByEmail(email),
-    );
+    const doesUserAlreadyExist = Boolean(await this.findUserByEmail(email));
     if (doesUserAlreadyExist) throw new Error('User already exists!');
 
     let newUser = User.createOneWith({ name, email, password });
@@ -31,22 +25,33 @@ export class UserService implements UserServiceInterface {
     await this.userRepo.save(newUser);
   }
 
-  public async findUserById(id: number): Promise<User | null> {
-    return await this.userRepo.findById(id);
+  public async findUserById(
+    id: number,
+    includeGallery = false,
+  ): Promise<User | null> {
+    return await this.userRepo.findOne({
+      where: { id },
+      relations: {
+        gallery: includeGallery,
+      },
+    });
   }
   public async findUserByEmail(
     email: string,
     includeGallery = false,
   ): Promise<User | null> {
-    return await this.userRepo.findByEmail(email, {
-      relations: { gallery: includeGallery },
+    return await this.userRepo.findOne({
+      where: { email },
+      relations: {
+        gallery: includeGallery,
+      },
     });
   }
 
   public async removeUserById(id: number): Promise<void> {
-    const doesUserAlreadyExist = Boolean(await this.userRepo.findById(id));
+    const doesUserAlreadyExist = Boolean(await this.findUserById(id));
     if (!doesUserAlreadyExist) throw new Error("User doesn't exist!");
 
-    await this.userRepo.deleteById(id);
+    await this.userRepo.delete({ id });
   }
 }
