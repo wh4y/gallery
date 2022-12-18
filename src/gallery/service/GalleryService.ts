@@ -5,13 +5,33 @@ import { Gallery } from '../entity/Gallery';
 import { IncludeOptions } from './options';
 import { GalleryRepo } from '../repository/GalleryRepo';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MediaFileRepo } from '../repository/MediaFileRepo';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
   constructor(
     @InjectRepository(Gallery)
     private readonly galleryRepo: GalleryRepo,
+    @InjectRepository(MediaFile)
+    private readonly mediaFileRepo: MediaFileRepo,
   ) {}
+
+  async findFileInGalleryById(
+    galleryId: number,
+    fileId: number,
+  ): Promise<MediaFile> {
+    const file = await this.mediaFileRepo.findOne({
+      where: {
+        id: fileId,
+        gallery: {
+          id: galleryId,
+        },
+      },
+    });
+    if (!file) throw new Error();
+
+    return file;
+  }
 
   public async findGalleryById(
     galleryId: number,

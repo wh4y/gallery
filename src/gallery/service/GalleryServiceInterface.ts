@@ -8,4 +8,6 @@ export interface GalleryServiceInterface {
   removeFileFromGalleryById(galleryId: number, fileId: number): Promise<void>;
 
   findGalleryById(galleryId: number, include: IncludeOptions): Promise<Gallery>;
+
+  findFileInGalleryById(galleryId: number, fileId: number): Promise<MediaFile>;
 }
