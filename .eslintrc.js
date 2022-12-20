@@ -32,7 +32,8 @@ module.exports = {
       "error",
       {
         "types": {
-          "Function": false
+          "Function": false,
+          "Object": false,
         },
         "extendDefaults": true
       }
