@@ -1,8 +1,8 @@
 import { AuthServiceInterface } from './AuthServiceInterface';
 import { Injectable } from '@nestjs/common';
 import { SignInOptions, SignUpOptions } from './options';
-import { User } from '../../user/entity/User';
-import { UserService } from '../../user/service/UserService';
+import { User } from '../../../user/entity/User';
+import { UserService } from '../../../user/service/UserService';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
