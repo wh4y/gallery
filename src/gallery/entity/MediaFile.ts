@@ -26,6 +26,11 @@ export class MediaFile {
   })
   public readonly filePath: string;
 
+  @Column({
+    type: 'varchar',
+  })
+  public readonly type: FileTypes;
+
   @ManyToOne(() => Gallery, gallery => gallery.mediaFiles, {
     onDelete: 'CASCADE',
   })
@@ -57,4 +62,13 @@ export class MediaFile {
   public withGallery(gallery: Gallery): MediaFile {
     return MediaFile.createOneWith({ ...this, gallery });
   }
+
+  public withType(type: FileTypes): MediaFile {
+    return MediaFile.createOneWith({ ...this, type });
+  }
+}
+
+export enum FileTypes {
+  VIDEO = 'VIDEO',
+  IMAGE = 'IMAGE',
 }
