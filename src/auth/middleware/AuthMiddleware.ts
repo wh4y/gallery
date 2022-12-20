@@ -26,7 +26,7 @@ export class AuthMiddleware implements NestMiddleware {
         throw new UnauthorizedException();
       });
 
-    const user = await this.usersService.findUserById(payload.userId);
+    const user = await this.usersService.findUserById(payload.userId, true);
     if (!user) throw new Error();
 
     req.user = user;
