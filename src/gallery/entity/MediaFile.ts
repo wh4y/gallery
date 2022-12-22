@@ -29,6 +29,11 @@ export class MediaFile {
   @Column({
     type: 'varchar',
   })
+  public readonly destination: string;
+
+  @Column({
+    type: 'varchar',
+  })
   public readonly type: FileTypes;
 
   @ManyToOne(() => Gallery, gallery => gallery.mediaFiles, {

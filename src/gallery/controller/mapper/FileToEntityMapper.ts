@@ -13,6 +13,7 @@ export class FileToEntityMapper {
       path: this.getPathToStatic(file, type),
       publicFileName: file.originalname.replace(/^(.+)\..+$/, '$1'),
       localFileName: file.filename,
+      destination: file.destination,
       extension: this.extractExtensionFromFile(file),
       type,
       gallery,
