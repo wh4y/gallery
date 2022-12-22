@@ -7,6 +7,7 @@ import { join } from 'path';
 import { AuthModule } from './auth/AuthModule';
 import { AuthMiddleware } from './auth/middleware/AuthMiddleware';
 import { GalleryController } from './gallery/controller/GalleryController';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -33,6 +34,13 @@ import { GalleryController } from './gallery/controller/GalleryController';
             join(__dirname, 'typeorm', 'migrations', '**', '*{.ts, .js}'),
           ],
         } as TypeOrmModuleOptions),
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'upload', 'images'),
+      serveRoot: '/gallery/images/',
+      serveStaticOptions: {
+        index: false,
+      },
     }),
     GalleryModule,
     AuthModule,
