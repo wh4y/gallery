@@ -1,6 +1,8 @@
 import { GalleryControllerInterface } from './GalleryControllerInterface';
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -18,6 +20,7 @@ import { FileToEntityMapper } from './mapper/FileToEntityMapper';
 import { User } from '../../user/entity/User';
 import { AuthedUser } from '../../auth/controller/decorator/AuthedUser';
 import { FileTypes, MediaFile } from '../entity/MediaFile';
+import { DeleteFilesDto } from './dto/DeleteFilesDto';
 
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {
@@ -94,5 +97,18 @@ export class GalleryController implements GalleryControllerInterface {
     @Param('id', new ParseIntPipe()) id: number,
   ): Promise<Gallery> {
     return await this.galleryService.findGalleryById(id, {});
+  }
+
+  @Delete('/:galleryId/remove-files')
+  public async removeFilesFromGallery(
+    @Param('galleryId', new ParseIntPipe()) galleryId: number,
+    @Body() dto: DeleteFilesDto,
+    @AuthedUser() invoker: User,
+  ): Promise<void> {
+    await this.galleryService.removeFilesFromGallery(
+      galleryId,
+      dto.fileIds,
+      invoker,
+    );
   }
 }
