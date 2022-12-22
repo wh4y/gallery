@@ -60,7 +60,13 @@ export class GalleryController implements GalleryControllerInterface {
     @AuthedUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    const mediaFile = this.fileToEntityMapper.mapFileToEntity(
+      file,
+      FileTypes.VIDEO,
+      user.gallery,
+    );
+
+    await this.galleryService.addFileToGallery(user.gallery.id, mediaFile);
   }
 
   @Post('/upload-image')
