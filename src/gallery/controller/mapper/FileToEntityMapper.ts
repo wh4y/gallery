@@ -1,6 +1,7 @@
 import { FileTypes, MediaFile } from '../../entity/MediaFile';
 import { Injectable } from '@nestjs/common';
 import { Gallery } from '../../entity/Gallery';
+import { extractExtFromFileName } from '../../../common/file/util/extractExtFromFileName';
 
 @Injectable()
 export class FileToEntityMapper {
@@ -14,16 +15,12 @@ export class FileToEntityMapper {
       publicFileName: file.originalname.replace(/^(.+)\..+$/, '$1'),
       localFileName: file.filename,
       destination: file.destination,
-      extension: this.extractExtensionFromFile(file),
+      extension: extractExtFromFileName(file.filename),
       type,
       gallery,
     });
 
     return mediaFile;
-  }
-
-  private extractExtensionFromFile(file: Express.Multer.File): string {
-    return file.originalname.replace(/^.+\.(.+)$/, '$1');
   }
 
   private getPathToStatic(file: Express.Multer.File, type: FileTypes): string {
