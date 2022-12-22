@@ -9,6 +9,7 @@ import { MediaFileRepo } from '../repository/MediaFileRepo';
 import { GalleryBlockedUserListRepo } from '../repository/GalleryBlockedUserListRepo';
 import { GalleryBlockedUserList } from '../entity/GalleryBlockedUserList';
 import { User } from '../../user/entity/User';
+import { Role } from '../../auth/role/enum/Role';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
@@ -31,6 +32,8 @@ export class GalleryService implements GalleryServiceInterface {
     });
     const ownerId = gallery.owner.id;
     if (ownerId === invoker.id) return gallery.mediaFiles;
+
+    if (invoker.role == Role.ADMIN) return gallery.mediaFiles;
 
     const isInvokerBlocked = await this.blockedUserListRepo.findOne({
       where: { id: galleryId, blockedUsers: { id: invoker.id } },
