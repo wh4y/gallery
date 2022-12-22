@@ -76,9 +76,9 @@ export class GalleryService implements GalleryServiceInterface {
     await this.galleryRepo.save(gallery);
   }
 
-  public async removeFileFromGalleryById(
+  public async removeFilesFromGallery(
     galleryId: number,
-    fileId: number,
+    fileIds: number[],
   ): Promise<void> {
     let gallery = await this.galleryRepo.findOne({
       where: { id: galleryId },
@@ -89,7 +89,7 @@ export class GalleryService implements GalleryServiceInterface {
     if (!gallery) throw new Error();
 
     gallery = gallery.withMediaFiles(
-      gallery.mediaFiles.filter(file => file.id !== fileId),
+      gallery.mediaFiles.filter(file => !fileIds.includes(file.id)),
     );
 
     await this.galleryRepo.save(gallery);

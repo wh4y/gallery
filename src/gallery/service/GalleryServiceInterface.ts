@@ -6,7 +6,7 @@ import { User } from '../../user/entity/User';
 export interface GalleryServiceInterface {
   addFileToGallery(galleryId: number, file: MediaFile): Promise<void>;
 
-  removeFileFromGalleryById(galleryId: number, fileId: number): Promise<void>;
+  removeFilesFromGallery(galleryId: number, fileIds: number[]): Promise<void>;
 
   findGalleryById(galleryId: number, include: IncludeOptions): Promise<Gallery>;
 
