@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Gallery } from '../../gallery/entity/Gallery';
+import { Role } from '../../auth/role/enum/Role';
 
 @Entity()
 export class User {
@@ -29,6 +30,13 @@ export class User {
     nullable: false,
   })
   public readonly password: string;
+
+  @Column({
+    type: 'varchar',
+    default: Role.INTERNAL_USER,
+    nullable: false,
+  })
+  public readonly role: string;
 
   @OneToOne(() => Gallery, gallery => gallery.owner, {
     cascade: ['insert'],
@@ -58,5 +66,9 @@ export class User {
 
   public withGallery(gallery: Gallery): User {
     return User.createOneWith({ ...this, gallery });
+  }
+
+  public withRole(role: Role): User {
+    return User.createOneWith({ ...this, role });
   }
 }
