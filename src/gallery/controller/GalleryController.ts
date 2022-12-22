@@ -33,7 +33,7 @@ export class GalleryController implements GalleryControllerInterface {
   ): Promise<MediaFile[]> {
     return await this.galleryService.findAllFilesInGalleryById(
       galleryId,
-      invoker.id,
+      invoker,
     );
   }
 

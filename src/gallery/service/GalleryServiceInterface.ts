@@ -1,6 +1,7 @@
 import { MediaFile } from '../entity/MediaFile';
 import { Gallery } from '../entity/Gallery';
 import { IncludeOptions } from './options';
+import { User } from '../../user/entity/User';
 
 export interface GalleryServiceInterface {
   addFileToGallery(galleryId: number, file: MediaFile): Promise<void>;
@@ -11,6 +12,6 @@ export interface GalleryServiceInterface {
 
   findAllFilesInGalleryById(
     galleryId: number,
-    invokerId: number,
+    invoker: User,
   ): Promise<MediaFile[]>;
 }

@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MediaFileRepo } from '../repository/MediaFileRepo';
 import { GalleryBlockedUserListRepo } from '../repository/GalleryBlockedUserListRepo';
 import { GalleryBlockedUserList } from '../entity/GalleryBlockedUserList';
+import { User } from '../../user/entity/User';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
@@ -22,17 +23,17 @@ export class GalleryService implements GalleryServiceInterface {
 
   public async findAllFilesInGalleryById(
     galleryId: number,
-    invokerId: number,
+    invoker: User,
   ): Promise<MediaFile[]> {
     const gallery = await this.findGalleryById(galleryId, {
       owner: true,
       mediaFiles: true,
     });
     const ownerId = gallery.owner.id;
-    if (ownerId === invokerId) return gallery.mediaFiles;
+    if (ownerId === invoker.id) return gallery.mediaFiles;
 
     const isInvokerBlocked = await this.blockedUserListRepo.findOne({
-      where: { id: galleryId, blockedUsers: { id: invokerId } },
+      where: { id: galleryId, blockedUsers: { id: invoker.id } },
     });
     if (gallery.isPrivate || isInvokerBlocked)
       throw new Error('Access denied!');
