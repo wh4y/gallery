@@ -2,11 +2,13 @@ import { MediaFile } from './MediaFile';
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../user/entity/User';
+import { GalleryBlockedUserList } from './GalleryBlockedUserList';
 
 @Entity()
 export class Gallery {
@@ -27,11 +29,17 @@ export class Gallery {
   @OneToOne(() => User, user => user.gallery, {
     onDelete: 'CASCADE',
   })
-  public readonly user: User;
+  public readonly owner: User;
+
+  @OneToOne(() => GalleryBlockedUserList, list => list.gallery, {
+    cascade: ['insert'],
+  })
+  @JoinColumn()
+  public readonly blockedUserList: GalleryBlockedUserList;
 
   public static createOneWith(options: Partial<Gallery>): Gallery {
-    const baseObject: typeof options = { isPrivate: false, mediaFiles: [] };
-    const gallery = Object.assign(baseObject, options);
+    const defaultOptions: typeof options = { isPrivate: false, mediaFiles: [] };
+    const gallery = Object.assign(defaultOptions, options);
     Reflect.setPrototypeOf(gallery, Gallery.prototype);
 
     return gallery as Gallery;
@@ -43,9 +51,5 @@ export class Gallery {
 
   public withMediaFiles(mediaFiles: MediaFile[]): Gallery {
     return Gallery.createOneWith({ ...this, mediaFiles });
-  }
-
-  public withUser(user: User): Gallery {
-    return Gallery.createOneWith({ ...this, user });
   }
 }

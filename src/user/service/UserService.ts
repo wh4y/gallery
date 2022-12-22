@@ -5,6 +5,7 @@ import { AddNewUserOptions } from './options';
 import { Gallery } from '../../gallery/entity/Gallery';
 import { UserRepo } from '../repository/UserRepo';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GalleryBlockedUserList } from '../../gallery/entity/GalleryBlockedUserList';
 
 @Injectable()
 export class UserService implements UserServiceInterface {
@@ -22,7 +23,9 @@ export class UserService implements UserServiceInterface {
     if (doesUserAlreadyExist) throw new Error('User already exists!');
 
     let newUser = User.createOneWith({ name, email, password });
-    const gallery = Gallery.createOneWith({ user: newUser });
+
+    const blockedUserList = GalleryBlockedUserList.createOneWith({});
+    const gallery = Gallery.createOneWith({ owner: newUser, blockedUserList });
 
     newUser = newUser.withGallery(gallery);
 
@@ -40,6 +43,7 @@ export class UserService implements UserServiceInterface {
       },
     });
   }
+
   public async findUserByEmail(
     email: string,
     includeGallery = false,

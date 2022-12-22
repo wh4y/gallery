@@ -9,5 +9,8 @@ export interface GalleryServiceInterface {
 
   findGalleryById(galleryId: number, include: IncludeOptions): Promise<Gallery>;
 
-  findFileInGalleryById(galleryId: number, fileId: number): Promise<MediaFile>;
+  findAllFilesInGalleryById(
+    galleryId: number,
+    invokerId: number,
+  ): Promise<MediaFile[]>;
 }

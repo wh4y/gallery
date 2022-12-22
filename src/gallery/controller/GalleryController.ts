@@ -5,7 +5,6 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,11 +14,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import * as path from 'path';
 import { diskStorage } from 'multer';
 import { v4 } from 'uuid';
-import { Response } from 'express';
 import { FileToEntityMapper } from './mapper/FileToEntityMapper';
 import { User } from '../../user/entity/User';
 import { AuthedUser } from '../../auth/controller/decorator/AuthedUser';
-import { FileTypes } from '../entity/MediaFile';
+import { FileTypes, MediaFile } from '../entity/MediaFile';
 
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {
@@ -28,7 +26,18 @@ export class GalleryController implements GalleryControllerInterface {
     private readonly fileToEntityMapper: FileToEntityMapper,
   ) {}
 
-  @Post('upload-video')
+  @Get('/:galleryId/all')
+  public async getAllFilesFromGallery(
+    @Param('galleryId', new ParseIntPipe()) galleryId: number,
+    @AuthedUser() invoker: User,
+  ): Promise<MediaFile[]> {
+    return await this.galleryService.findAllFilesInGalleryById(
+      galleryId,
+      invoker.id,
+    );
+  }
+
+  @Post('/upload-video')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -44,14 +53,14 @@ export class GalleryController implements GalleryControllerInterface {
       }),
     }),
   )
-  async addVideoToGallery(
+  public async addVideoToGallery(
     @AuthedUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  @Post('upload-image')
+  @Post('/upload-image')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -67,7 +76,7 @@ export class GalleryController implements GalleryControllerInterface {
       }),
     }),
   )
-  async addImageToGallery(
+  public async addImageToGallery(
     @AuthedUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
@@ -85,21 +94,5 @@ export class GalleryController implements GalleryControllerInterface {
     @Param('id', new ParseIntPipe()) id: number,
   ): Promise<Gallery> {
     return await this.galleryService.findGalleryById(id, { mediaFiles: true });
-  }
-
-  @Get('/:galleryId/download-file/:fileId')
-  public async downloadFileById(
-    @Param('galleryId', new ParseIntPipe()) galleryId: number,
-    @Param('fileId', new ParseIntPipe()) fileId: number,
-    @Res() res: Response,
-  ): Promise<void> {
-    const { filePath } = await this.galleryService.findFileInGalleryById(
-      galleryId,
-      fileId,
-    );
-
-    res.sendFile(filePath, {
-      root: './',
-    });
   }
 }

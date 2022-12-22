@@ -1,4 +1,4 @@
 export type IncludeOptions = {
-  user?: boolean;
+  owner?: boolean;
   mediaFiles?: boolean;
 };

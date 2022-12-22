@@ -30,7 +30,7 @@ export class User {
   })
   public readonly password: string;
 
-  @OneToOne(() => Gallery, gallery => gallery.user, {
+  @OneToOne(() => Gallery, gallery => gallery.owner, {
     cascade: ['insert'],
     nullable: false,
   })

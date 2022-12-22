@@ -1,6 +1,6 @@
 import { Gallery } from '../entity/Gallery';
-import { Response } from 'express';
 import { User } from '../../user/entity/User';
+import { MediaFile } from '../entity/MediaFile';
 
 export interface GalleryControllerInterface {
   getGalleryById(id: number): Promise<Gallery>;
@@ -9,9 +9,8 @@ export interface GalleryControllerInterface {
 
   addImageToGallery(user: User, file: Express.Multer.File): Promise<void>;
 
-  downloadFileById(
+  getAllFilesFromGallery(
     galleryId: number,
-    fileId: number,
-    res: Response,
-  ): Promise<void>;
+    invoker: User,
+  ): Promise<MediaFile[]>;
 }

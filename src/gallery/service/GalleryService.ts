@@ -6,6 +6,8 @@ import { IncludeOptions } from './options';
 import { GalleryRepo } from '../repository/GalleryRepo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MediaFileRepo } from '../repository/MediaFileRepo';
+import { GalleryBlockedUserListRepo } from '../repository/GalleryBlockedUserListRepo';
+import { GalleryBlockedUserList } from '../entity/GalleryBlockedUserList';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
@@ -14,23 +16,30 @@ export class GalleryService implements GalleryServiceInterface {
     private readonly galleryRepo: GalleryRepo,
     @InjectRepository(MediaFile)
     private readonly mediaFileRepo: MediaFileRepo,
+    @InjectRepository(GalleryBlockedUserList)
+    private readonly blockedUserListRepo: GalleryBlockedUserListRepo,
   ) {}
 
-  async findFileInGalleryById(
+  public async findAllFilesInGalleryById(
     galleryId: number,
-    fileId: number,
-  ): Promise<MediaFile> {
-    const file = await this.mediaFileRepo.findOne({
-      where: {
-        id: fileId,
-        gallery: {
-          id: galleryId,
-        },
-      },
+    invokerId: number,
+  ): Promise<MediaFile[]> {
+    const gallery = await this.findGalleryById(galleryId, {
+      owner: true,
+      mediaFiles: true,
     });
-    if (!file) throw new Error();
+    const ownerId = gallery.owner.id;
+    if (ownerId === invokerId) return gallery.mediaFiles;
 
-    return file;
+    const isInvokerBlocked = await this.blockedUserListRepo.findOne({
+      where: { id: galleryId, blockedUsers: { id: invokerId } },
+    });
+    if (gallery.isPrivate || isInvokerBlocked)
+      throw new Error('Access denied!');
+
+    const accessibleMediaFiles = gallery.mediaFiles;
+
+    return accessibleMediaFiles;
   }
 
   public async findGalleryById(
