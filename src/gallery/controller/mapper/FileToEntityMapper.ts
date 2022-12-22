@@ -10,7 +10,7 @@ export class FileToEntityMapper {
     gallery: Gallery,
   ): MediaFile {
     const mediaFile = MediaFile.createOneWith({
-      filePath: file.path,
+      filePath: this.getPathToStatic(file, type),
       publicFileName: file.originalname.replace(/^(.+)\..+$/, '$1'),
       localFileName: file.filename,
       extension: this.extractExtensionFromFile(file),
@@ -23,5 +23,11 @@ export class FileToEntityMapper {
 
   private extractExtensionFromFile(file: Express.Multer.File): string {
     return file.originalname.replace(/^.+\.(.+)$/, '$1');
+  }
+
+  private getPathToStatic(file: Express.Multer.File, type: FileTypes): string {
+    const typedFolder = type === FileTypes.IMAGE ? 'images' : 'videos';
+
+    return '/gallery'.concat('/', typedFolder).concat('/', file.filename);
   }
 }
