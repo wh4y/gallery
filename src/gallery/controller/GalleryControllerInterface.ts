@@ -3,7 +3,7 @@ import { User } from '../../user/entity/User';
 import { MediaFile } from '../entity/MediaFile';
 
 export interface GalleryControllerInterface {
-  getGalleryById(id: number): Promise<Gallery>;
+  getGalleryInfoById(id: number): Promise<Gallery>;
 
   addVideoToGallery(user: User, file: Express.Multer.File): Promise<void>;
 

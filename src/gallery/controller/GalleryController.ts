@@ -90,9 +90,9 @@ export class GalleryController implements GalleryControllerInterface {
   }
 
   @Get('/:id')
-  public async getGalleryById(
+  public async getGalleryInfoById(
     @Param('id', new ParseIntPipe()) id: number,
   ): Promise<Gallery> {
-    return await this.galleryService.findGalleryById(id, { mediaFiles: true });
+    return await this.galleryService.findGalleryById(id, {});
   }
 }
