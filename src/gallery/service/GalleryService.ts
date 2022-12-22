@@ -30,10 +30,11 @@ export class GalleryService implements GalleryServiceInterface {
       owner: true,
       mediaFiles: true,
     });
-    const ownerId = gallery.owner.id;
-    if (ownerId === invoker.id) return gallery.mediaFiles;
 
-    if (invoker.role == Role.ADMIN) return gallery.mediaFiles;
+    const isInvokerOwner = gallery.owner.id === invoker.id;
+    const isInvokerAdmin = invoker.role == Role.ADMIN;
+
+    if (isInvokerOwner || isInvokerAdmin) return gallery.mediaFiles;
 
     const isInvokerBlocked = await this.blockedUserListRepo.findOne({
       where: { id: galleryId, blockedUsers: { id: invoker.id } },
@@ -79,14 +80,21 @@ export class GalleryService implements GalleryServiceInterface {
   public async removeFilesFromGallery(
     galleryId: number,
     fileIds: number[],
+    invoker: User,
   ): Promise<void> {
     let gallery = await this.galleryRepo.findOne({
       where: { id: galleryId },
       relations: {
         mediaFiles: true,
+        owner: true,
       },
     });
     if (!gallery) throw new Error();
+
+    const isInvokerOwner = gallery.owner.id === invoker.id;
+    const isInvokerAdmin = invoker.role == Role.ADMIN;
+
+    if (!isInvokerAdmin || !isInvokerOwner) throw new Error('Access denied');
 
     gallery = gallery.withMediaFiles(
       gallery.mediaFiles.filter(file => !fileIds.includes(file.id)),
