@@ -4,12 +4,16 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   ParseIntPipe,
   Post,
+  Req,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { Response, Request } from 'express';
 import { GalleryService } from '../service/GalleryService';
 import { Gallery } from '../entity/Gallery';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -21,6 +25,9 @@ import { User } from '../../user/entity/User';
 import { AuthedUser } from '../../auth/controller/decorator/AuthedUser';
 import { FileTypes, MediaFile } from '../entity/MediaFile';
 import { DeleteFilesDto } from './dto/DeleteFilesDto';
+import { extractExtFromFileName } from '../../common/file/util/extractExtFromFileName';
+import { createReadStream } from 'fs';
+import { stat as fs_stat } from 'fs/promises';
 
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {
@@ -28,6 +35,43 @@ export class GalleryController implements GalleryControllerInterface {
     private readonly galleryService: GalleryService,
     private readonly fileToEntityMapper: FileToEntityMapper,
   ) {}
+
+  @Header('Accept-Ranges', 'bytes')
+  @Get('/videos/:localFileName')
+  public async getVideoStream(
+    @Param('localFileName') localFileName: string,
+    @AuthedUser() invoker: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    const path = './upload/videos/' + localFileName;
+    const stat = await fs_stat(path);
+    const fileSize = stat.size;
+    const range = req.headers.range;
+    const contentType = 'video/' + extractExtFromFileName(localFileName);
+    if (range) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const chunksize = end - start + 1;
+      const file = createReadStream(path, { start, end });
+      const head = {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': contentType,
+      };
+      res.writeHead(206, head);
+      file.pipe(res);
+    } else {
+      const head = {
+        'Content-Length': fileSize,
+        'Content-Type': contentType,
+      };
+      res.writeHead(200, head);
+      createReadStream(path).pipe(res);
+    }
+  }
 
   @Get('/:galleryId/all')
   public async getAllFilesFromGallery(
