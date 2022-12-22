@@ -24,7 +24,7 @@ export class MediaFile {
   @Column({
     type: 'varchar',
   })
-  public readonly filePath: string;
+  public readonly path: string;
 
   @Column({
     type: 'varchar',
@@ -56,7 +56,7 @@ export class MediaFile {
   }
 
   public withFilePath(filePath: string): MediaFile {
-    return MediaFile.createOneWith({ ...this, filePath });
+    return MediaFile.createOneWith({ ...this, path: filePath });
   }
 
   public withGallery(gallery: Gallery): MediaFile {
