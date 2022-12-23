@@ -20,7 +20,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'warn',
     "@typescript-eslint/no-unnecessary-condition": "warn",
-    "@typescript-eslint/no-unsafe-return": "error",
+    "@typescript-eslint/no-unsafe-return": "warn",
     "@typescript-eslint/no-unsafe-call": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/prefer-readonly": "warn",
