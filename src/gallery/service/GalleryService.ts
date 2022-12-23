@@ -2,7 +2,7 @@ import { GalleryServiceInterface } from './GalleryServiceInterface';
 import { Injectable } from '@nestjs/common';
 import { MediaFile } from '../entity/MediaFile';
 import { Gallery } from '../entity/Gallery';
-import { IncludeOptions } from './types';
+import { EditGalleryParamsOptions, IncludeOptions } from './types';
 import { GalleryRepo } from '../repository/GalleryRepo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MediaFileRepo } from '../repository/MediaFileRepo';
@@ -89,14 +89,7 @@ export class GalleryService implements GalleryServiceInterface {
     fileIds: number[],
     invoker: User,
   ): Promise<void> {
-    let gallery = await this.galleryRepo.findOne({
-      where: { id: galleryId },
-      relations: {
-        mediaFiles: true,
-        owner: true,
-      },
-    });
-    if (!gallery) throw new Error();
+    let gallery = await this.findGalleryById(galleryId, { owner: true });
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
     const isInvokerAdmin = invoker.roles.some(
@@ -110,5 +103,22 @@ export class GalleryService implements GalleryServiceInterface {
     );
 
     await this.galleryRepo.save(gallery);
+  }
+
+  public async editGalleryParams(
+    galleryId: number,
+    options: EditGalleryParamsOptions,
+    invoker: User,
+  ): Promise<void> {
+    const gallery = await this.findGalleryById(galleryId, { owner: true });
+
+    const isInvokerOwner = gallery.owner.id === invoker.id;
+    const isInvokerAdmin = invoker.roles.some(
+      role => role.name === RoleEnum.ADMIN,
+    );
+
+    if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
+
+    await this.galleryRepo.update({ id: galleryId }, options);
   }
 }
