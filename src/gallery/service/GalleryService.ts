@@ -10,6 +10,9 @@ import { GalleryBlockedUserListRepo } from '../repository/GalleryBlockedUserList
 import { GalleryBlockedUserList } from '../entity/GalleryBlockedUserList';
 import { User } from '../../user/entity/User';
 import { RoleEnum } from '../../user/core/RoleEnum';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { In } from 'typeorm';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
@@ -89,7 +92,7 @@ export class GalleryService implements GalleryServiceInterface {
     fileIds: number[],
     invoker: User,
   ): Promise<void> {
-    let gallery = await this.findGalleryById(galleryId, { owner: true });
+    const gallery = await this.findGalleryById(galleryId, { owner: true });
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
     const isInvokerAdmin = invoker.roles.some(
@@ -98,11 +101,22 @@ export class GalleryService implements GalleryServiceInterface {
 
     if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
 
-    gallery = gallery.withMediaFiles(
-      gallery.mediaFiles.filter(file => !fileIds.includes(file.id)),
-    );
+    const filesToDelete = await this.mediaFileRepo.find({
+      where: { id: In(fileIds) },
+      select: {
+        id: true,
+        destination: true,
+        localFileName: true,
+      },
+    });
 
-    await this.galleryRepo.save(gallery);
+    await this.mediaFileRepo.remove(filesToDelete);
+
+    for (const file of filesToDelete) {
+      await fs.unlink(
+        path.join('./', file.destination.slice(1), file.localFileName),
+      );
+    }
   }
 
   public async editGalleryParams(
