@@ -3,6 +3,7 @@ import { User } from '../../user/entity/User';
 import { MediaFile } from '../entity/MediaFile';
 import { DeleteFilesDto } from './dto/DeleteFilesDto';
 import { Request, Response } from 'express';
+import { EditGalleryParamsDto } from './dto/EditGalleryParamsDto';
 
 export interface GalleryControllerInterface {
   getGalleryInfoById(id: number): Promise<Gallery>;
@@ -26,6 +27,12 @@ export interface GalleryControllerInterface {
   removeFilesFromGallery(
     galleryId: number,
     dto: DeleteFilesDto,
+    invoker: User,
+  ): Promise<void>;
+
+  editGalleryParams(
+    galleryId: number,
+    dto: EditGalleryParamsDto,
     invoker: User,
   ): Promise<void>;
 }

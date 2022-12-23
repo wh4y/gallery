@@ -7,6 +7,7 @@ import {
   Header,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Req,
   Res,
@@ -28,6 +29,7 @@ import { DeleteFilesDto } from './dto/DeleteFilesDto';
 import { extractExtFromFileName } from '../../common/file/util/extractExtFromFileName';
 import { createReadStream } from 'fs';
 import { stat as fs_stat } from 'fs/promises';
+import { EditGalleryParamsDto } from './dto/EditGalleryParamsDto';
 
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {
@@ -160,5 +162,14 @@ export class GalleryController implements GalleryControllerInterface {
       dto.fileIds,
       invoker,
     );
+  }
+
+  @Patch('/:galleryId/edit-params')
+  async editGalleryParams(
+    @Param('galleryId', new ParseIntPipe()) galleryId: number,
+    @Body() dto: EditGalleryParamsDto,
+    @AuthedUser() invoker: User,
+  ): Promise<void> {
+    await this.galleryService.editGalleryParams(galleryId, dto, invoker);
   }
 }
