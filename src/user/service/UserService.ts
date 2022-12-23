@@ -7,7 +7,7 @@ import { UserRepo } from '../repository/UserRepo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GalleryBlockedUserList } from '../../gallery/entity/GalleryBlockedUserList';
 import { Role } from '../entity/Role';
-import { RoleEnum } from '../core/RoleEnum';
+import { Roles } from '../core/Roles';
 
 @Injectable()
 export class UserService implements UserServiceInterface {
@@ -28,7 +28,7 @@ export class UserService implements UserServiceInterface {
       name,
       email,
       password,
-      roles: [Role.createOneWith({ name: RoleEnum.INTERNAL_USER })],
+      roles: [Role.createOneWith({ name: Roles.INTERNAL_USER })],
     });
 
     const blockedUserList = GalleryBlockedUserList.createOneWith({});

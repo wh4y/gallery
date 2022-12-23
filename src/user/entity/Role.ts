@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn } from 'typeorm';
-import { RoleEnum } from '../core/RoleEnum';
+import { Roles } from '../core/Roles';
 
 @Entity()
 export class Role {
@@ -7,7 +7,7 @@ export class Role {
     type: 'varchar',
     nullable: false,
   })
-  public readonly name: RoleEnum;
+  public readonly name: Roles;
 
   public static createOneWith(options: Partial<Role>): Role {
     const plain = { ...options };

@@ -9,7 +9,7 @@ import { MediaFileRepo } from '../repository/MediaFileRepo';
 import { GalleryBlockedUserListRepo } from '../repository/GalleryBlockedUserListRepo';
 import { GalleryBlockedUserList } from '../entity/GalleryBlockedUserList';
 import { User } from '../../user/entity/User';
-import { RoleEnum } from '../../user/core/RoleEnum';
+import { Roles } from '../../user/core/Roles';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { In } from 'typeorm';
@@ -36,7 +36,7 @@ export class GalleryService implements GalleryServiceInterface {
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
     const isInvokerAdmin = invoker.roles.some(
-      role => role.name === RoleEnum.ADMIN,
+      role => role.name === Roles.ADMIN,
     );
 
     if (isInvokerOwner || isInvokerAdmin) return gallery.mediaFiles;
@@ -96,7 +96,7 @@ export class GalleryService implements GalleryServiceInterface {
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
     const isInvokerAdmin = invoker.roles.some(
-      role => role.name === RoleEnum.ADMIN,
+      role => role.name === Roles.ADMIN,
     );
 
     if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
@@ -128,7 +128,7 @@ export class GalleryService implements GalleryServiceInterface {
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
     const isInvokerAdmin = invoker.roles.some(
-      role => role.name === RoleEnum.ADMIN,
+      role => role.name === Roles.ADMIN,
     );
 
     if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
