@@ -14,13 +14,9 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import { GalleryService } from '../service/GalleryService';
 import { Gallery } from '../entity/Gallery';
-import { FileInterceptor } from '@nestjs/platform-express';
-import * as path from 'path';
-import { diskStorage } from 'multer';
-import { v4 } from 'uuid';
 import { FileToEntityMapper } from './mapper/FileToEntityMapper';
 import { User } from '../../user/entity/User';
 import { AuthedUser } from '../../auth/controller/decorator/AuthedUser';
@@ -30,6 +26,7 @@ import { extractExtFromFileName } from '../../common/file/util/extractExtFromFil
 import { createReadStream } from 'fs';
 import { stat as fs_stat } from 'fs/promises';
 import { EditGalleryParamsDto } from './dto/EditGalleryParamsDto';
+import { FileInterceptor } from './interceptor/FileInterceptor';
 
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {
@@ -87,21 +84,7 @@ export class GalleryController implements GalleryControllerInterface {
   }
 
   @Post('/upload-video')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './upload/videos',
-        filename: (req, file, cb) => {
-          const filename =
-            path.parse(file.originalname).name.replace(/\s/g, '') + '_' + v4();
-          file.filename;
-          const extension = path.parse(file.originalname).ext;
-
-          cb(null, `${filename}${extension}`);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor(FileTypes.VIDEO, 'file'))
   public async addVideoToGallery(
     @AuthedUser() user: User,
     @UploadedFile() file: Express.Multer.File,
@@ -116,21 +99,7 @@ export class GalleryController implements GalleryControllerInterface {
   }
 
   @Post('/upload-image')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './upload/images',
-        filename: (req, file, cb) => {
-          const filename =
-            path.parse(file.originalname).name.replace(/\s/g, '') + '_' + v4();
-          file.filename;
-          const extension = path.parse(file.originalname).ext;
-
-          cb(null, `${filename}${extension}`);
-        },
-      }),
-    }),
-  )
+  // @UseInterceptors(FileInterceptor(FileTypes.IMAGE, 'file'))
   public async addImageToGallery(
     @AuthedUser() user: User,
     @UploadedFile() file: Express.Multer.File,
