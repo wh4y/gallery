@@ -1,4 +1,4 @@
-import { SignInOptions, SignUpOptions } from './options';
+import { SignInOptions, SignUpOptions } from './types';
 import { User } from '../../../user/entity/User';
 
 export interface AuthServiceInterface {

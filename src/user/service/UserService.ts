@@ -1,7 +1,7 @@
 import { UserServiceInterface } from './UserServiceInterface';
 import { User } from '../entity/User';
 import { Injectable } from '@nestjs/common';
-import { AddNewUserOptions } from './options';
+import { AddNewUserOptions } from './types';
 import { Gallery } from '../../gallery/entity/Gallery';
 import { UserRepo } from '../repository/UserRepo';
 import { InjectRepository } from '@nestjs/typeorm';

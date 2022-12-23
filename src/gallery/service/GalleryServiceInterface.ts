@@ -1,6 +1,6 @@
 import { MediaFile } from '../entity/MediaFile';
 import { Gallery } from '../entity/Gallery';
-import { IncludeOptions } from './options';
+import { IncludeOptions } from './types';
 import { User } from '../../user/entity/User';
 
 export interface GalleryServiceInterface {

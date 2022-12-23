@@ -2,7 +2,7 @@ import { GalleryServiceInterface } from './GalleryServiceInterface';
 import { Injectable } from '@nestjs/common';
 import { MediaFile } from '../entity/MediaFile';
 import { Gallery } from '../entity/Gallery';
-import { IncludeOptions } from './options';
+import { IncludeOptions } from './types';
 import { GalleryRepo } from '../repository/GalleryRepo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MediaFileRepo } from '../repository/MediaFileRepo';

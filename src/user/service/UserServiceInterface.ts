@@ -1,5 +1,5 @@
 import { User } from '../entity/User';
-import { AddNewUserOptions } from './options';
+import { AddNewUserOptions } from './types';
 
 export interface UserServiceInterface {
   addNewUser(options: AddNewUserOptions): Promise<void>;

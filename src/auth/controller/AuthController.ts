@@ -10,7 +10,7 @@ import { AuthService } from '../service/auth/AuthService';
 import { UserResponse } from './response/UserResponse';
 import { SignInDto } from './dto/SignInDto';
 import { SignUpDto } from './dto/SignUpDto';
-import { SignInOptions, SignUpOptions } from '../service/auth/options';
+import { SignInOptions, SignUpOptions } from '../service/auth/types';
 import { AttachJwtInterceptor } from './interceptor/AttachTokensInterceptor';
 
 @Controller('/auth')
