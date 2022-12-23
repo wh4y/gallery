@@ -9,7 +9,7 @@ import { MediaFileRepo } from '../repository/MediaFileRepo';
 import { GalleryBlockedUserListRepo } from '../repository/GalleryBlockedUserListRepo';
 import { GalleryBlockedUserList } from '../entity/GalleryBlockedUserList';
 import { User } from '../../user/entity/User';
-import { Role } from '../../auth/role/enum/Role';
+import { RoleEnum } from '../../user/core/RoleEnum';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
@@ -32,7 +32,9 @@ export class GalleryService implements GalleryServiceInterface {
     });
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
-    const isInvokerAdmin = invoker.role == Role.ADMIN;
+    const isInvokerAdmin = invoker.roles.some(
+      role => role.name === RoleEnum.ADMIN,
+    );
 
     if (isInvokerOwner || isInvokerAdmin) return gallery.mediaFiles;
 
@@ -53,7 +55,12 @@ export class GalleryService implements GalleryServiceInterface {
   ): Promise<Gallery> {
     const gallery = await this.galleryRepo.findOne({
       where: { id: galleryId },
-      relations: includeOptions,
+      relations: {
+        ...includeOptions,
+        owner: {
+          roles: true,
+        },
+      },
     });
     if (!gallery) throw new Error();
 
@@ -92,9 +99,11 @@ export class GalleryService implements GalleryServiceInterface {
     if (!gallery) throw new Error();
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
-    const isInvokerAdmin = invoker.role == Role.ADMIN;
+    const isInvokerAdmin = invoker.roles.some(
+      role => role.name === RoleEnum.ADMIN,
+    );
 
-    if (!isInvokerAdmin || !isInvokerOwner) throw new Error('Access denied');
+    if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
 
     gallery = gallery.withMediaFiles(
       gallery.mediaFiles.filter(file => !fileIds.includes(file.id)),

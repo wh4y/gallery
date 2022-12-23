@@ -6,6 +6,8 @@ import { Gallery } from '../../gallery/entity/Gallery';
 import { UserRepo } from '../repository/UserRepo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GalleryBlockedUserList } from '../../gallery/entity/GalleryBlockedUserList';
+import { Role } from '../entity/Role';
+import { RoleEnum } from '../core/RoleEnum';
 
 @Injectable()
 export class UserService implements UserServiceInterface {
@@ -22,7 +24,12 @@ export class UserService implements UserServiceInterface {
     const doesUserAlreadyExist = Boolean(await this.findUserByEmail(email));
     if (doesUserAlreadyExist) throw new Error('User already exists!');
 
-    let newUser = User.createOneWith({ name, email, password });
+    let newUser = User.createOneWith({
+      name,
+      email,
+      password,
+      roles: [Role.createOneWith({ name: RoleEnum.INTERNAL_USER })],
+    });
 
     const blockedUserList = GalleryBlockedUserList.createOneWith({});
     const gallery = Gallery.createOneWith({ owner: newUser, blockedUserList });
@@ -40,6 +47,7 @@ export class UserService implements UserServiceInterface {
       where: { id },
       relations: {
         gallery: includeGallery,
+        roles: true,
       },
     });
   }
@@ -52,6 +60,7 @@ export class UserService implements UserServiceInterface {
       where: { email },
       relations: {
         gallery: includeGallery,
+        roles: true,
       },
     });
   }

@@ -2,11 +2,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Gallery } from '../../gallery/entity/Gallery';
-import { Role } from '../../auth/role/enum/Role';
+import { Role } from './Role';
 
 @Entity()
 export class User {
@@ -31,12 +33,9 @@ export class User {
   })
   public readonly password: string;
 
-  @Column({
-    type: 'varchar',
-    default: Role.INTERNAL_USER,
-    nullable: false,
-  })
-  public readonly role: string;
+  @ManyToMany(() => Role, { cascade: ['insert'] })
+  @JoinTable()
+  public readonly roles: Role[];
 
   @OneToOne(() => Gallery, gallery => gallery.owner, {
     cascade: ['insert'],
