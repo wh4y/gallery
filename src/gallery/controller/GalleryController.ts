@@ -99,7 +99,7 @@ export class GalleryController implements GalleryControllerInterface {
   }
 
   @Post('/upload-image')
-  // @UseInterceptors(FileInterceptor(FileTypes.IMAGE, 'file'))
+  @UseInterceptors(FileInterceptor(FileTypes.IMAGE, 'file'))
   public async addImageToGallery(
     @AuthedUser() user: User,
     @UploadedFile() file: Express.Multer.File,
