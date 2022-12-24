@@ -1,10 +1,5 @@
 import { Gallery } from '../entity/Gallery';
 
-export type IncludeOptions = {
-  owner?: boolean;
-  mediaFiles?: boolean;
-};
-
 type GalleryWithoutConstParams = Omit<
   Partial<Gallery>,
   'id' | 'owner' | 'mediaFiles'

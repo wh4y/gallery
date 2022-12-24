@@ -35,4 +35,10 @@ export interface GalleryControllerInterface {
     dto: EditGalleryParamsDto,
     invoker: User,
   ): Promise<void>;
+
+  forbidFileViewingForUser(
+    fileId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void>;
 }

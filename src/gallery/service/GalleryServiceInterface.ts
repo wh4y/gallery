@@ -1,7 +1,8 @@
 import { MediaFile } from '../entity/MediaFile';
 import { Gallery } from '../entity/Gallery';
-import { EditGalleryParamsOptions, IncludeOptions } from './types';
+import { EditGalleryParamsOptions } from './types';
 import { User } from '../../user/entity/User';
+import { FindOptionsRelations } from 'typeorm';
 
 export interface GalleryServiceInterface {
   addFileToGallery(galleryId: number, file: MediaFile): Promise<void>;
@@ -12,7 +13,10 @@ export interface GalleryServiceInterface {
     invoker: User,
   ): Promise<void>;
 
-  findGalleryById(galleryId: number, include: IncludeOptions): Promise<Gallery>;
+  findGalleryById(
+    galleryId: number,
+    include?: FindOptionsRelations<Gallery>,
+  ): Promise<Gallery>;
 
   editGalleryParams(
     galleryId: number,

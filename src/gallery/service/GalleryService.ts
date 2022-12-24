@@ -2,7 +2,7 @@ import { GalleryServiceInterface } from './GalleryServiceInterface';
 import { Injectable } from '@nestjs/common';
 import { MediaFile } from '../entity/MediaFile';
 import { Gallery } from '../entity/Gallery';
-import { EditGalleryParamsOptions, IncludeOptions } from './types';
+import { EditGalleryParamsOptions } from './types';
 import { GalleryRepo } from '../repository/GalleryRepo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MediaFileRepo } from '../repository/MediaFileRepo';
@@ -12,7 +12,7 @@ import { User } from '../../user/entity/User';
 import { Roles } from '../../user/core/Roles';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { In } from 'typeorm';
+import { FindOptionsRelations, In } from 'typeorm';
 import { FileBlockedUserList } from '../entity/FileBlockedUserList';
 import { FileBlockedUserListRepo } from '../repository/FileBlockedUserListRepo';
 import { UserService } from '../../user/service/UserService';
@@ -37,7 +37,9 @@ export class GalleryService implements GalleryServiceInterface {
   ): Promise<MediaFile[]> {
     const gallery = await this.findGalleryById(galleryId, {
       owner: true,
-      mediaFiles: true,
+      mediaFiles: {
+        blockedUserList: { blockedUsers: true },
+      },
     });
 
     const isInvokerOwner = gallery.owner.id === invoker.id;
@@ -53,14 +55,16 @@ export class GalleryService implements GalleryServiceInterface {
     if (gallery.isPrivate || isInvokerBlocked)
       throw new Error('Access denied!');
 
-    const accessibleMediaFiles = gallery.mediaFiles;
+    const accessibleMediaFiles = gallery.mediaFiles.filter(file =>
+      file.blockedUserList.blockedUsers.includes(invoker),
+    );
 
     return accessibleMediaFiles;
   }
 
   public async findGalleryById(
     galleryId: number,
-    includeOptions: IncludeOptions,
+    includeOptions?: FindOptionsRelations<Gallery>,
   ): Promise<Gallery> {
     const gallery = await this.galleryRepo.findOne({
       where: { id: galleryId },
@@ -88,7 +92,12 @@ export class GalleryService implements GalleryServiceInterface {
     });
     if (!gallery) throw new Error();
 
-    gallery.mediaFiles.push(file);
+    gallery.mediaFiles.push(
+      MediaFile.createOneWith({
+        ...file,
+        blockedUserList: FileBlockedUserList.createOneWith({}),
+      }),
+    );
 
     await this.galleryRepo.save(gallery);
   }
@@ -149,7 +158,7 @@ export class GalleryService implements GalleryServiceInterface {
   ): Promise<void> {
     const file = await this.mediaFileRepo.findOne({
       where: { id: fileId },
-      relations: { gallery: true, blockedUserList: true },
+      relations: { gallery: { owner: true }, blockedUserList: true },
     });
     if (!file) throw new Error("File doesn't exist!");
 

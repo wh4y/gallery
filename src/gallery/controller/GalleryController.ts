@@ -142,4 +142,13 @@ export class GalleryController implements GalleryControllerInterface {
   ): Promise<void> {
     await this.galleryService.editGalleryParams(galleryId, dto, invoker);
   }
+
+  @Post('/forbid-file-viewing/:fileId/for/:userId')
+  async forbidFileViewingForUser(
+    @Param('fileId', new ParseIntPipe()) fileId: number,
+    @Param('userId', new ParseIntPipe()) userId: number,
+    @AuthedUser() invoker: User,
+  ): Promise<void> {
+    await this.galleryService.forbidFileViewingForUser(fileId, userId, invoker);
+  }
 }
