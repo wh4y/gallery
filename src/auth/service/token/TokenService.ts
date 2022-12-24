@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../../../user/service/UserService';
-import { User } from '../../../user/entity/User';
 import { TokenListRepo } from '../../repository/TokenListRepo';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TokenList } from '../../entity/TokenList';
@@ -53,15 +52,15 @@ export class TokenService implements TokenServiceInterface {
     );
   }
 
-  public generateTokensFromUser(user: User): string[] {
-    const payload = { userId: user.id };
+  public generateTokensFromFromUserId(userId: number): string[] {
+    const payload = { userId };
     const accessToken = this.generateAccessToken(payload);
     const refreshToken = this.generateRefreshToken(payload);
 
     return [accessToken, refreshToken];
   }
 
-  public decodeAccessToken(token: string): JwtPayload {
+  public decodeToken(token: string): JwtPayload {
     return this.jwtService.decode(token) as JwtPayload;
   }
 }

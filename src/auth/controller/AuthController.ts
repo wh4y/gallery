@@ -5,6 +5,7 @@ import {
   Get,
   NotImplementedException,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth/AuthService';
@@ -12,11 +13,9 @@ import { SignInDto } from './dto/SignInDto';
 import { SignUpDto } from './dto/SignUpDto';
 import { SignInOptions, SignUpOptions } from '../service/auth/types';
 import { TokenService } from '../service/token/TokenService';
-import { AuthedUser } from './decorator/AuthedUser';
 import { AccessTokenCookie } from './cookie/AccessTokenCookie';
 import { RefreshTokenCookie } from './cookie/RefreshTokenCookie';
-import { Response } from 'express';
-import { JwtPayload } from '../service/token/types';
+import { Request, Response } from 'express';
 
 @Controller('/auth')
 export class AuthController implements AuthControllerInterface {
@@ -28,9 +27,35 @@ export class AuthController implements AuthControllerInterface {
   @Get('/refresh-tokens')
   public async refreshToken(
     @Res() res: Response,
-    @AuthedUser() payload: JwtPayload,
+    @Req() req: Request,
   ): Promise<void> {
-    const a = 2;
+    const accessToken = req.cookies[AccessTokenCookie.ACCESS_TOKEN];
+    const { userId } = this.tokenService.decodeToken(accessToken);
+
+    const [newAccessToken, newRefreshToken] =
+      this.tokenService.generateTokensFromFromUserId(userId);
+
+    await this.tokenService.attachTokensToUser({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      userId: userId,
+    });
+
+    const accessTokenCookie = new AccessTokenCookie(newAccessToken);
+    const refreshTokenCookie = new RefreshTokenCookie(newRefreshToken);
+
+    res.cookie(
+      accessTokenCookie.name,
+      accessTokenCookie.val,
+      accessTokenCookie.options,
+    );
+    res.cookie(
+      refreshTokenCookie.name,
+      refreshTokenCookie.val,
+      refreshTokenCookie.options,
+    );
+
+    res.end();
   }
 
   @Post('/signin')
@@ -40,7 +65,7 @@ export class AuthController implements AuthControllerInterface {
   ): Promise<void> {
     const user = await this.authService.signIn(dto as SignInOptions);
     const [accessToken, refreshToken] =
-      this.tokenService.generateTokensFromUser(user);
+      this.tokenService.generateTokensFromFromUserId(user.id);
 
     await this.tokenService.attachTokensToUser({
       accessToken,
