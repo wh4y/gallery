@@ -35,12 +35,6 @@ export class AuthController implements AuthControllerInterface {
     const [newAccessToken, newRefreshToken] =
       this.tokenService.generateTokensFromFromUserId(userId);
 
-    await this.tokenService.attachTokensToUser({
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-      userId: userId,
-    });
-
     const accessTokenCookie = new AccessTokenCookie(newAccessToken);
     const refreshTokenCookie = new RefreshTokenCookie(newRefreshToken);
 
@@ -66,12 +60,6 @@ export class AuthController implements AuthControllerInterface {
     const user = await this.authService.signIn(dto as SignInOptions);
     const [accessToken, refreshToken] =
       this.tokenService.generateTokensFromFromUserId(user.id);
-
-    await this.tokenService.attachTokensToUser({
-      accessToken,
-      refreshToken,
-      userId: user.id,
-    });
 
     const accessTokenCookie = new AccessTokenCookie(accessToken);
     const refreshTokenCookie = new RefreshTokenCookie(refreshToken);

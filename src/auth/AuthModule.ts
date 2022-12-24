@@ -4,11 +4,9 @@ import { AuthController } from './controller/AuthController';
 import { AuthService } from './service/auth/AuthService';
 import { JwtModule } from '@nestjs/jwt';
 import { TokenService } from './service/token/TokenService';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TokenList } from './entity/TokenList';
 
 @Module({
-  imports: [UserModule, JwtModule, TypeOrmModule.forFeature([TokenList])],
+  imports: [UserModule, JwtModule],
   controllers: [AuthController],
   providers: [AuthService, TokenService],
   exports: [TokenService, UserModule],
