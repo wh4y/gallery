@@ -1,6 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Gallery } from './Gallery';
 import { FileTypes } from '../core/FileTypes';
+import { FileBlockedUserList } from './FileBlockedUserList';
 
 @Entity()
 export class MediaFile {
@@ -41,6 +49,12 @@ export class MediaFile {
     onDelete: 'CASCADE',
   })
   public readonly gallery: Gallery;
+
+  @OneToOne(() => FileBlockedUserList, list => list.mediaFile, {
+    cascade: ['insert'],
+  })
+  @JoinColumn()
+  public readonly blockedUserList: FileBlockedUserList;
 
   public static createOneWith(options: Partial<MediaFile>): MediaFile {
     const plain = { ...options };
