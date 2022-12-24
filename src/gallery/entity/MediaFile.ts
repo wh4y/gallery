@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Gallery } from './Gallery';
+import { FileTypes } from '../core/FileTypes';
 
 @Entity()
 export class MediaFile {
@@ -71,9 +72,4 @@ export class MediaFile {
   public withType(type: FileTypes): MediaFile {
     return MediaFile.createOneWith({ ...this, type });
   }
-}
-
-export enum FileTypes {
-  VIDEO = 'VIDEO',
-  IMAGE = 'IMAGE',
 }

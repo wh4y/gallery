@@ -2,8 +2,8 @@ import { diskStorage } from 'multer';
 import * as path from 'path';
 import { v4 } from 'uuid';
 import { FileInterceptor as ExpressFileInterceptor } from '@nestjs/platform-express';
-import { FileTypes } from '../../entity/MediaFile';
 import { NestInterceptor, Type } from '@nestjs/common';
+import { FileTypes } from '../../core/FileTypes';
 
 export const FileInterceptor = (
   type: FileTypes,

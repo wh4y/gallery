@@ -20,13 +20,14 @@ import { Gallery } from '../entity/Gallery';
 import { FileToEntityMapper } from './mapper/FileToEntityMapper';
 import { User } from '../../user/entity/User';
 import { AuthedUser } from '../../auth/controller/decorator/AuthedUser';
-import { FileTypes, MediaFile } from '../entity/MediaFile';
 import { DeleteFilesDto } from './dto/DeleteFilesDto';
 import { extractExtFromFileName } from '../../common/file/util/extractExtFromFileName';
 import { createReadStream } from 'fs';
 import { stat as fs_stat } from 'fs/promises';
 import { EditGalleryParamsDto } from './dto/EditGalleryParamsDto';
 import { FileInterceptor } from './interceptor/FileInterceptor';
+import { MediaFile } from '../entity/MediaFile';
+import { FileTypes } from '../core/FileTypes';
 
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {

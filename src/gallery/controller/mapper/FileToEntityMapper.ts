@@ -1,7 +1,8 @@
-import { FileTypes, MediaFile } from '../../entity/MediaFile';
+import { MediaFile } from '../../entity/MediaFile';
 import { Injectable } from '@nestjs/common';
 import { Gallery } from '../../entity/Gallery';
 import { extractExtFromFileName } from '../../../common/file/util/extractExtFromFileName';
+import { FileTypes } from '../../core/FileTypes';
 
 @Injectable()
 export class FileToEntityMapper {
