@@ -55,8 +55,11 @@ export class GalleryService implements GalleryServiceInterface {
     if (gallery.isPrivate || isInvokerBlocked)
       throw new Error('Access denied!');
 
-    const accessibleMediaFiles = gallery.mediaFiles.filter(file =>
-      file.blockedUserList.blockedUsers.includes(invoker),
+    const accessibleMediaFiles = gallery.mediaFiles.filter(
+      file =>
+        !file.blockedUserList.blockedUsers.some(
+          blockerUser => blockerUser.id === invoker.id,
+        ),
     );
 
     return accessibleMediaFiles;
