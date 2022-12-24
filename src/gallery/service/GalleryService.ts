@@ -13,6 +13,9 @@ import { Roles } from '../../user/core/Roles';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { In } from 'typeorm';
+import { FileBlockedUserList } from '../entity/FileBlockedUserList';
+import { FileBlockedUserListRepo } from '../repository/FileBlockedUserListRepo';
+import { UserService } from '../../user/service/UserService';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
@@ -22,7 +25,10 @@ export class GalleryService implements GalleryServiceInterface {
     @InjectRepository(MediaFile)
     private readonly mediaFileRepo: MediaFileRepo,
     @InjectRepository(GalleryBlockedUserList)
-    private readonly blockedUserListRepo: GalleryBlockedUserListRepo,
+    private readonly galleryBlockedUserListRepo: GalleryBlockedUserListRepo,
+    @InjectRepository(FileBlockedUserList)
+    private readonly fileBlockedUserListRepo: FileBlockedUserListRepo,
+    private readonly userService: UserService,
   ) {}
 
   public async findAllFilesInGalleryById(
@@ -41,7 +47,7 @@ export class GalleryService implements GalleryServiceInterface {
 
     if (isInvokerOwner || isInvokerAdmin) return gallery.mediaFiles;
 
-    const isInvokerBlocked = await this.blockedUserListRepo.findOne({
+    const isInvokerBlocked = await this.galleryBlockedUserListRepo.findOne({
       where: { id: galleryId, blockedUsers: { id: invoker.id } },
     });
     if (gallery.isPrivate || isInvokerBlocked)
@@ -134,5 +140,32 @@ export class GalleryService implements GalleryServiceInterface {
     if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
 
     await this.galleryRepo.update({ id: galleryId }, options);
+  }
+
+  public async forbidFileViewingForUser(
+    fileId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void> {
+    const file = await this.mediaFileRepo.findOne({
+      where: { id: fileId },
+      relations: { gallery: true, blockedUserList: true },
+    });
+    if (!file) throw new Error("File doesn't exist!");
+
+    const isInvokerOwner = file.gallery.owner.id === invoker.id;
+    const isInvokerAdmin = invoker.roles.some(
+      role => role.name === Roles.ADMIN,
+    );
+
+    if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
+
+    const userToBeBlocked = await this.userService.findUserById(userId);
+
+    await this.fileBlockedUserListRepo
+      .createQueryBuilder()
+      .relation('blockedUsers')
+      .of(file.blockedUserList)
+      .add(userToBeBlocked);
   }
 }

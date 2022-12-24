@@ -24,4 +24,10 @@ export interface GalleryServiceInterface {
     galleryId: number,
     invoker: User,
   ): Promise<MediaFile[]>;
+
+  forbidFileViewingForUser(
+    fileId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void>;
 }

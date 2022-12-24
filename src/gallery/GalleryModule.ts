@@ -6,10 +6,12 @@ import { GalleryService } from './service/GalleryService';
 import { GalleryController } from './controller/GalleryController';
 import { FileToEntityMapper } from './controller/mapper/FileToEntityMapper';
 import { GalleryBlockedUserList } from './entity/GalleryBlockedUserList';
+import { UserModule } from '../user/UserModule';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Gallery, MediaFile, GalleryBlockedUserList]),
+    UserModule,
   ],
   providers: [GalleryService, FileToEntityMapper],
   controllers: [GalleryController],
