@@ -77,7 +77,7 @@ export class GalleryService implements GalleryServiceInterface {
         },
       },
     });
-    if (!gallery) throw new Error();
+    if (!gallery) throw new Error("Gallery doesn't exist!");
 
     return gallery;
   }
