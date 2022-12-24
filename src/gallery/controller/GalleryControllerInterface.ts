@@ -41,4 +41,10 @@ export interface GalleryControllerInterface {
     userId: number,
     invoker: User,
   ): Promise<void>;
+
+  forbidGalleryViewingForUser(
+    galleryId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void>;
 }

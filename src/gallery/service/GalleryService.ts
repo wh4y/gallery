@@ -86,13 +86,7 @@ export class GalleryService implements GalleryServiceInterface {
     galleryId: number,
     file: MediaFile,
   ): Promise<void> {
-    const gallery = await this.galleryRepo.findOne({
-      where: { id: galleryId },
-      relations: {
-        mediaFiles: true,
-      },
-    });
-    if (!gallery) throw new Error();
+    const gallery = await this.findGalleryById(galleryId, { mediaFiles: true });
 
     gallery.mediaFiles.push(
       MediaFile.createOneWith({
@@ -174,6 +168,30 @@ export class GalleryService implements GalleryServiceInterface {
       .createQueryBuilder()
       .relation('blockedUsers')
       .of(file.blockedUserList)
+      .add(userToBeBlocked);
+  }
+
+  public async forbidGalleryViewingForUser(
+    galleryId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void> {
+    const gallery = await this.findGalleryById(galleryId, {
+      blockedUserList: { blockedUsers: true },
+    });
+
+    const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
+      gallery,
+      invoker,
+    );
+    if (!doesUserHaveAccess) throw new Error('Access denied');
+
+    const userToBeBlocked = await this.userService.findUserById(userId);
+
+    await this.galleryBlockedUserListRepo
+      .createQueryBuilder()
+      .relation('blockedUsers')
+      .of(gallery.blockedUserList)
       .add(userToBeBlocked);
   }
 
