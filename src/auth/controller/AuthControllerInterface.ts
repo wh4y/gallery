@@ -5,6 +5,6 @@ import { Request, Response } from 'express';
 export interface AuthControllerInterface {
   signIn(dto: SignInDto, res: Response): Promise<void>;
   singUp(dto: SignUpDto, res: Response): Promise<void>;
-  singOut(): Promise<void>;
+  singOut(res: Response): Promise<void>;
   refreshToken(res: Response, req: Request): Promise<void>;
 }

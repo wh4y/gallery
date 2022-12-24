@@ -1,13 +1,5 @@
 import { AuthControllerInterface } from './AuthControllerInterface';
-import {
-  Body,
-  Controller,
-  Get,
-  NotImplementedException,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from '../service/auth/AuthService';
 import { SignInDto } from './dto/SignInDto';
 import { SignUpDto } from './dto/SignUpDto';
@@ -78,8 +70,12 @@ export class AuthController implements AuthControllerInterface {
     res.send(user);
   }
 
-  public async singOut(): Promise<void> {
-    throw new NotImplementedException();
+  @Post('/signout')
+  public async singOut(@Res() res: Response): Promise<void> {
+    res.clearCookie(AccessTokenCookie.ACCESS_TOKEN);
+    res.clearCookie(RefreshTokenCookie.REFRESH_TOKEN);
+
+    res.end();
   }
 
   @Post('/signup')
