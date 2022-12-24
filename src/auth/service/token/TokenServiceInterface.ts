@@ -1,13 +1,14 @@
 import { JwtPayload } from './types';
+import { User } from '../../../user/entity/User';
 
 export interface TokenServiceInterface {
   generateAccessToken(payload: JwtPayload): string;
 
   generateRefreshToken(payload: JwtPayload): string;
 
-  verifyAccessJWT(token: string): Promise<string>;
+  verifyJWT(token: string, type: string): Promise<string>;
 
-  generateTokensFromFromUserId(userId: number): string[];
+  generateTokensFromFromUser(user: User): string[];
 
   decodeToken(token: string): JwtPayload;
 }

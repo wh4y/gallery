@@ -21,7 +21,7 @@ export class AuthMiddleware implements NestMiddleware {
     if (!accessToken) throw new UnauthorizedException();
 
     const payload = await this.tokenService
-      .verifyAccessJWT<JwtPayload>(accessToken)
+      .verifyJWT<JwtPayload>(accessToken, 'ACCESS')
       .catch(() => {
         throw new UnauthorizedException();
       });

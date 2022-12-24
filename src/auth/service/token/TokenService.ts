@@ -3,6 +3,7 @@ import { JwtPayload } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
+import { User } from '../../../user/entity/User';
 
 @Injectable()
 export class TokenService implements TokenServiceInterface {
@@ -30,13 +31,19 @@ export class TokenService implements TokenServiceInterface {
     return this.generateJWT(payload, 'REFRESH');
   }
 
-  public async verifyAccessJWT<T extends Object>(token: string): Promise<T> {
-    const secret = this.configService.get<string>('JWT_ACCESS_SECRET');
+  public async verifyJWT<T extends Object>(
+    token: string,
+    type: string,
+  ): Promise<T> {
+    const secret = this.configService.get<string>(
+      `JWT_${type.toUpperCase()}_SECRET`,
+    );
+
     return await this.jwtService.verifyAsync(token, { secret });
   }
 
-  public generateTokensFromFromUserId(userId: number): string[] {
-    const payload = { userId };
+  public generateTokensFromFromUser(user: User): string[] {
+    const payload = { userId: user.id };
     const accessToken = this.generateAccessToken(payload);
     const refreshToken = this.generateRefreshToken(payload);
 

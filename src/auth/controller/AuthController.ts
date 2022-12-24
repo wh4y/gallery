@@ -1,5 +1,13 @@
 import { AuthControllerInterface } from './AuthControllerInterface';
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from '../service/auth/AuthService';
 import { SignInDto } from './dto/SignInDto';
 import { SignUpDto } from './dto/SignUpDto';
@@ -8,6 +16,7 @@ import { TokenService } from '../service/token/TokenService';
 import { AccessTokenCookie } from './cookie/AccessTokenCookie';
 import { RefreshTokenCookie } from './cookie/RefreshTokenCookie';
 import { Request, Response } from 'express';
+import { User } from '../../user/entity/User';
 
 @Controller('/auth')
 export class AuthController implements AuthControllerInterface {
@@ -21,11 +30,18 @@ export class AuthController implements AuthControllerInterface {
     @Res() res: Response,
     @Req() req: Request,
   ): Promise<void> {
-    const accessToken = req.cookies[AccessTokenCookie.ACCESS_TOKEN];
-    const { userId } = this.tokenService.decodeToken(accessToken);
+    const refreshToken = req.cookies[RefreshTokenCookie.REFRESH_TOKEN];
+    if (!refreshToken)
+      throw new BadRequestException('Cookie with refresh token required!');
+
+    const user = await this.tokenService
+      .verifyJWT<User>(refreshToken, 'REFRESH')
+      .catch(() => {
+        throw new BadRequestException('Refresh token expired!');
+      });
 
     const [newAccessToken, newRefreshToken] =
-      this.tokenService.generateTokensFromFromUserId(userId);
+      this.tokenService.generateTokensFromFromUser(user);
 
     const accessTokenCookie = new AccessTokenCookie(newAccessToken);
     const refreshTokenCookie = new RefreshTokenCookie(newRefreshToken);
@@ -51,7 +67,7 @@ export class AuthController implements AuthControllerInterface {
   ): Promise<void> {
     const user = await this.authService.signIn(dto as SignInOptions);
     const [accessToken, refreshToken] =
-      this.tokenService.generateTokensFromFromUserId(user.id);
+      this.tokenService.generateTokensFromFromUser(user);
 
     const accessTokenCookie = new AccessTokenCookie(accessToken);
     const refreshTokenCookie = new RefreshTokenCookie(refreshToken);
