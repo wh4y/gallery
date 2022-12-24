@@ -6,7 +6,7 @@ import {
 import { NextFunction, Request, Response } from 'express';
 import { AccessTokenCookie } from '../controller/cookie/AccessTokenCookie';
 import { TokenService } from '../service/token/TokenService';
-import { JwtPayload } from '../service/token/options';
+import { JwtPayload } from '../service/token/types';
 import { UserService } from '../../user/service/UserService';
 
 @Injectable()

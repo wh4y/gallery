@@ -1,10 +1,11 @@
 import { SignInDto } from './dto/SignInDto';
 import { SignUpDto } from './dto/SignUpDto';
-import { User } from '../../user/entity/User';
+import { Response } from 'express';
+import { JwtPayload } from '../service/token/types';
 
 export interface AuthControllerInterface {
-  signIn(dto: SignInDto): Promise<User>;
-  singUp(dto: SignUpDto): Promise<User>;
+  signIn(dto: SignInDto, res: Response): Promise<void>;
+  singUp(dto: SignUpDto, res: Response): Promise<void>;
   singOut(): Promise<void>;
-  refreshToken(): Promise<void>;
+  refreshToken(res: Response, payload: JwtPayload): Promise<void>;
 }

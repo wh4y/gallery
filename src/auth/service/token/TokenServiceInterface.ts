@@ -1,4 +1,4 @@
-import { JwtPayload } from './options';
+import { JwtPayload } from './types';
 
 export interface TokenServiceInterface {
   generateAccessToken(payload: JwtPayload): string;
