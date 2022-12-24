@@ -7,11 +7,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth/AuthService';
-import { UserResponse } from './response/UserResponse';
 import { SignInDto } from './dto/SignInDto';
 import { SignUpDto } from './dto/SignUpDto';
 import { SignInOptions, SignUpOptions } from '../service/auth/types';
 import { AttachJwtInterceptor } from './interceptor/AttachTokensInterceptor';
+import { User } from '../../user/entity/User';
 
 @Controller('/auth')
 export class AuthController implements AuthControllerInterface {
@@ -23,7 +23,7 @@ export class AuthController implements AuthControllerInterface {
 
   @UseInterceptors(AttachJwtInterceptor)
   @Post('/signin')
-  public async signIn(@Body() dto: SignInDto): Promise<UserResponse> {
+  public async signIn(@Body() dto: SignInDto): Promise<User> {
     return await this.authService.signIn(dto as SignInOptions);
   }
 
@@ -33,7 +33,7 @@ export class AuthController implements AuthControllerInterface {
 
   @UseInterceptors(AttachJwtInterceptor)
   @Post('/signup')
-  public async singUp(@Body() dto: SignUpDto): Promise<UserResponse> {
+  public async singUp(@Body() dto: SignUpDto): Promise<User> {
     return await this.authService.signUp(dto as SignUpOptions);
   }
 }
