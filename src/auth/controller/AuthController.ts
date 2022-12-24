@@ -17,6 +17,7 @@ import { AccessTokenCookie } from './cookie/AccessTokenCookie';
 import { RefreshTokenCookie } from './cookie/RefreshTokenCookie';
 import { Request, Response } from 'express';
 import { User } from '../../user/entity/User';
+import { TokenTypes } from '../core/TokenTypes';
 
 @Controller('/auth')
 export class AuthController implements AuthControllerInterface {
@@ -35,7 +36,7 @@ export class AuthController implements AuthControllerInterface {
       throw new BadRequestException('Cookie with refresh token required!');
 
     const user = await this.tokenService
-      .verifyJWT<User>(refreshToken, 'REFRESH')
+      .verifyJWT<User>(refreshToken, TokenTypes.REFRESH)
       .catch(() => {
         throw new BadRequestException('Refresh token expired!');
       });

@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { User } from '../../../user/entity/User';
+import { TokenTypes } from '../../core/TokenTypes';
 
 @Injectable()
 export class TokenService implements TokenServiceInterface {
@@ -12,7 +13,7 @@ export class TokenService implements TokenServiceInterface {
     private readonly configService: ConfigService,
   ) {}
 
-  private generateJWT<P extends Object>(payload: P, type: string): string {
+  private generateJWT<P extends Object>(payload: P, type: TokenTypes): string {
     const expiresIn = this.configService.get<string>(
       `JWT_${type.toUpperCase()}_EXPIRES_IN`,
     );
@@ -24,11 +25,11 @@ export class TokenService implements TokenServiceInterface {
   }
 
   public generateAccessToken(payload: JwtPayload): string {
-    return this.generateJWT(payload, 'ACCESS');
+    return this.generateJWT(payload, TokenTypes.ACCESS);
   }
 
   public generateRefreshToken(payload: JwtPayload): string {
-    return this.generateJWT(payload, 'REFRESH');
+    return this.generateJWT(payload, TokenTypes.REFRESH);
   }
 
   public async verifyJWT<T extends Object>(
