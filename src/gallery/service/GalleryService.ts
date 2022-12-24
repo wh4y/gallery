@@ -42,12 +42,11 @@ export class GalleryService implements GalleryServiceInterface {
       },
     });
 
-    const isInvokerOwner = gallery.owner.id === invoker.id;
-    const isInvokerAdmin = invoker.roles.some(
-      role => role.name === Roles.ADMIN,
+    const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
+      gallery,
+      invoker,
     );
-
-    if (isInvokerOwner || isInvokerAdmin) return gallery.mediaFiles;
+    if (doesUserHaveAccess) return gallery.mediaFiles;
 
     const isInvokerBlocked = await this.galleryBlockedUserListRepo.findOne({
       where: { id: galleryId, blockedUsers: { id: invoker.id } },
@@ -112,12 +111,11 @@ export class GalleryService implements GalleryServiceInterface {
   ): Promise<void> {
     const gallery = await this.findGalleryById(galleryId, { owner: true });
 
-    const isInvokerOwner = gallery.owner.id === invoker.id;
-    const isInvokerAdmin = invoker.roles.some(
-      role => role.name === Roles.ADMIN,
+    const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
+      gallery,
+      invoker,
     );
-
-    if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new Error('Access denied');
 
     const filesToDelete = await this.mediaFileRepo.find({
       where: { id: In(fileIds) },
@@ -144,12 +142,11 @@ export class GalleryService implements GalleryServiceInterface {
   ): Promise<void> {
     const gallery = await this.findGalleryById(galleryId, { owner: true });
 
-    const isInvokerOwner = gallery.owner.id === invoker.id;
-    const isInvokerAdmin = invoker.roles.some(
-      role => role.name === Roles.ADMIN,
+    const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
+      gallery,
+      invoker,
     );
-
-    if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new Error('Access denied');
 
     await this.galleryRepo.update({ id: galleryId }, options);
   }
@@ -165,12 +162,11 @@ export class GalleryService implements GalleryServiceInterface {
     });
     if (!file) throw new Error("File doesn't exist!");
 
-    const isInvokerOwner = file.gallery.owner.id === invoker.id;
-    const isInvokerAdmin = invoker.roles.some(
-      role => role.name === Roles.ADMIN,
+    const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
+      file.gallery,
+      invoker,
     );
-
-    if (!isInvokerAdmin && !isInvokerOwner) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new Error('Access denied');
 
     const userToBeBlocked = await this.userService.findUserById(userId);
 
@@ -179,5 +175,12 @@ export class GalleryService implements GalleryServiceInterface {
       .relation('blockedUsers')
       .of(file.blockedUserList)
       .add(userToBeBlocked);
+  }
+
+  private doesUserHaveAccessToGallery(gallery: Gallery, user: User): boolean {
+    const isInvokerOwner = gallery.owner.id === user.id;
+    const isInvokerAdmin = user.roles.some(role => role.name === Roles.ADMIN);
+
+    return isInvokerAdmin || isInvokerOwner;
   }
 }
