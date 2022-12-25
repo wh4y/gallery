@@ -69,6 +69,14 @@ export class UserService implements UserServiceInterface {
     });
   }
 
+  public async updateEmailConfirmationStatus(
+    user: User,
+    status: boolean,
+  ): Promise<void> {
+    const updatedUser = user.withIsEmailConfirmed(status);
+    await this.userRepo.save(updatedUser);
+  }
+
   public async removeUserById(id: number): Promise<void> {
     const doesUserAlreadyExist = Boolean(await this.findUserById(id));
     if (!doesUserAlreadyExist) throw new UserDoesntExistException();

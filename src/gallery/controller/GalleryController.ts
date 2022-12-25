@@ -1,6 +1,7 @@
 import { GalleryControllerInterface } from './GalleryControllerInterface';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -14,13 +15,15 @@ import {
   UploadedFile,
   UseFilters,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { GalleryService } from '../service/GalleryService';
 import { Gallery } from '../entity/Gallery';
 import { FileToEntityMapper } from './mapper/FileToEntityMapper';
 import { User } from '../../user/entity/User';
-import { AuthedUser } from '../../auth/controller/decorator/AuthedUser';
+import { AuthedUser } from '../../auth/controller/auth/decorator/AuthedUser';
 import { DeleteFilesDto } from './dto/DeleteFilesDto';
 import { extractExtFromFileName } from '../../common/file/util/extractExtFromFileName';
 import { createReadStream } from 'fs';
@@ -31,6 +34,8 @@ import { MediaFile } from '../entity/MediaFile';
 import { FileTypes } from '../core/FileTypes';
 import { GalleryExceptionFilter } from './exceptionFilter/GalleryExceptionFilter';
 
+@UseInterceptors(ClassSerializerInterceptor)
+@UsePipes(new ValidationPipe({ transform: true, forbidUnknownValues: false }))
 @UseFilters(GalleryExceptionFilter)
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {

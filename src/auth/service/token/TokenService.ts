@@ -1,5 +1,5 @@
 import { TokenServiceInterface } from './TokenServiceInterface';
-import { JwtPayload } from './types';
+import { EmailVerificationJwtPayload, UserJwtPayload } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
@@ -24,12 +24,18 @@ export class TokenService implements TokenServiceInterface {
     return this.jwtService.sign(payload, { expiresIn, secret });
   }
 
-  public generateAccessToken(payload: JwtPayload): string {
+  public generateAccessToken(payload: UserJwtPayload): string {
     return this.generateJWT(payload, TokenTypes.ACCESS);
   }
 
-  public generateRefreshToken(payload: JwtPayload): string {
+  public generateRefreshToken(payload: UserJwtPayload): string {
     return this.generateJWT(payload, TokenTypes.REFRESH);
+  }
+
+  public generateEmailVerificationToken(
+    payload: EmailVerificationJwtPayload,
+  ): string {
+    return this.generateJWT(payload, TokenTypes.VERIFICATION_TOKEN);
   }
 
   public async verifyJWT<T extends Object>(
@@ -51,7 +57,7 @@ export class TokenService implements TokenServiceInterface {
     return [accessToken, refreshToken];
   }
 
-  public decodeToken(token: string): JwtPayload {
-    return this.jwtService.decode(token) as JwtPayload;
+  public decodeToken(token: string): UserJwtPayload {
+    return this.jwtService.decode(token) as UserJwtPayload;
   }
 }

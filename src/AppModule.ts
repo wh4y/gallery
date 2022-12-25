@@ -15,6 +15,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       isGlobal: true,
       validationSchema: Joi.object({
         APP_PORT: Joi.number().required(),
+        EMAIL_SERVICE_HOST: Joi.string().required(),
+        EMAIL_SERVICE_USER: Joi.string().required(),
+        EMAIL_SERVICE_PASS: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({

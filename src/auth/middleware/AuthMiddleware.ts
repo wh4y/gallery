@@ -4,9 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { AccessTokenCookie } from '../controller/cookie/AccessTokenCookie';
+import { AccessTokenCookie } from '../controller/auth/cookie/AccessTokenCookie';
 import { TokenService } from '../service/token/TokenService';
-import { JwtPayload } from '../service/token/types';
+import { UserJwtPayload } from '../service/token/types';
 import { UserService } from '../../user/service/UserService';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class AuthMiddleware implements NestMiddleware {
     if (!accessToken) throw new UnauthorizedException();
 
     const payload = await this.tokenService
-      .verifyJWT<JwtPayload>(accessToken, 'ACCESS')
+      .verifyJWT<UserJwtPayload>(accessToken, 'ACCESS')
       .catch(() => {
         throw new UnauthorizedException();
       });

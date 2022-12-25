@@ -13,16 +13,16 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthService } from '../service/auth/AuthService';
+import { AuthService } from '../../service/auth/AuthService';
 import { SignInDto } from './dto/SignInDto';
 import { SignUpDto } from './dto/SignUpDto';
-import { SignInOptions, SignUpOptions } from '../service/auth/types';
-import { TokenService } from '../service/token/TokenService';
+import { SignInOptions, SignUpOptions } from '../../service/auth/types';
+import { TokenService } from '../../service/token/TokenService';
 import { AccessTokenCookie } from './cookie/AccessTokenCookie';
 import { RefreshTokenCookie } from './cookie/RefreshTokenCookie';
 import { Request, Response } from 'express';
-import { User } from '../../user/entity/User';
-import { TokenTypes } from '../core/TokenTypes';
+import { User } from '../../../user/entity/User';
+import { TokenTypes } from '../../core/TokenTypes';
 import { AuthExceptionFilter } from './exceptionFilter/AuthExceptionFilter';
 import { plainToInstance } from 'class-transformer';
 

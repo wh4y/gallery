@@ -1,5 +1,9 @@
-export type JwtPayload = {
+export type UserJwtPayload = {
   userId: number;
+};
+
+export type EmailVerificationJwtPayload = {
+  email: string;
 };
 
 export type AttachTokenToUserOptions = {

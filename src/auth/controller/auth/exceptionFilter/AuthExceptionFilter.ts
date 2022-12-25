@@ -8,8 +8,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { IncorrectPassOrEmailException } from '../../service/auth/exceptions';
-import { UserAlreadyExistsException } from '../../../user/service/exceptions';
+import { IncorrectPassOrEmailException } from '../../../service/auth/exceptions';
+import { UserAlreadyExistsException } from '../../../../user/service/exceptions';
 
 @Catch(IncorrectPassOrEmailException, UserAlreadyExistsException)
 export class AuthExceptionFilter implements ExceptionFilter {

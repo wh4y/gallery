@@ -1,4 +1,4 @@
-import { Cookie } from '../../../common/cookie/Cookie';
+import { Cookie } from '../../../../common/cookie/Cookie';
 import { CookieOptions } from 'express';
 
 export class RefreshTokenCookie extends Cookie {

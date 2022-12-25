@@ -26,7 +26,14 @@ export class User {
     unique: true,
     nullable: false,
   })
-  public email: string;
+  public readonly email: string;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  public readonly isEmailConfirmed: boolean;
 
   @Exclude()
   @Column({
@@ -71,5 +78,9 @@ export class User {
 
   public withRole(role: Role): User {
     return User.createOneWith({ ...this, role });
+  }
+
+  public withIsEmailConfirmed(isEmailConfirmed: boolean): User {
+    return User.createOneWith({ ...this, isEmailConfirmed });
   }
 }
