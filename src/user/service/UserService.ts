@@ -8,6 +8,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GalleryBlockedUserList } from '../../gallery/entity/GalleryBlockedUserList';
 import { Role } from '../entity/Role';
 import { Roles } from '../core/Roles';
+import {
+  UserAlreadyExistsException,
+  UserDoesntExistException,
+} from './exceptions';
 
 @Injectable()
 export class UserService implements UserServiceInterface {
@@ -22,7 +26,7 @@ export class UserService implements UserServiceInterface {
     password,
   }: AddNewUserOptions): Promise<void> {
     const doesUserAlreadyExist = Boolean(await this.findUserByEmail(email));
-    if (doesUserAlreadyExist) throw new Error('User already exists!');
+    if (doesUserAlreadyExist) throw new UserAlreadyExistsException();
 
     let newUser = User.createOneWith({
       name,
@@ -67,7 +71,7 @@ export class UserService implements UserServiceInterface {
 
   public async removeUserById(id: number): Promise<void> {
     const doesUserAlreadyExist = Boolean(await this.findUserById(id));
-    if (!doesUserAlreadyExist) throw new Error("User doesn't exist!");
+    if (!doesUserAlreadyExist) throw new UserDoesntExistException();
 
     await this.userRepo.delete({ id });
   }
