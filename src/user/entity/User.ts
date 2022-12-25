@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Gallery } from '../../gallery/entity/Gallery';
 import { Role } from './Role';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -27,6 +28,7 @@ export class User {
   })
   public email: string;
 
+  @Exclude()
   @Column({
     type: 'varchar',
     nullable: false,

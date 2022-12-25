@@ -2,12 +2,16 @@ import { AuthControllerInterface } from './AuthControllerInterface';
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Post,
   Req,
   Res,
   UseFilters,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth/AuthService';
 import { SignInDto } from './dto/SignInDto';
@@ -20,7 +24,10 @@ import { Request, Response } from 'express';
 import { User } from '../../user/entity/User';
 import { TokenTypes } from '../core/TokenTypes';
 import { AuthExceptionFilter } from './exceptionFilter/AuthExceptionFilter';
+import { plainToInstance } from 'class-transformer';
 
+@UseInterceptors(ClassSerializerInterceptor)
+@UsePipes(new ValidationPipe({ transform: true, forbidUnknownValues: false }))
 @UseFilters(AuthExceptionFilter)
 @Controller('/auth')
 export class AuthController implements AuthControllerInterface {
@@ -87,7 +94,7 @@ export class AuthController implements AuthControllerInterface {
       refreshTokenCookie.options,
     );
 
-    res.send(user);
+    res.send(plainToInstance(User, user));
   }
 
   @Post('/signout')
