@@ -16,6 +16,11 @@ import { FindOptionsRelations, In } from 'typeorm';
 import { FileBlockedUserList } from '../entity/FileBlockedUserList';
 import { FileBlockedUserListRepo } from '../repository/FileBlockedUserListRepo';
 import { UserService } from '../../user/service/UserService';
+import {
+  AccessDeniedException,
+  FileDoesntExistException,
+  GalleryDoesntExistException,
+} from './exception';
 
 @Injectable()
 export class GalleryService implements GalleryServiceInterface {
@@ -52,7 +57,7 @@ export class GalleryService implements GalleryServiceInterface {
       where: { id: galleryId, blockedUsers: { id: invoker.id } },
     });
     if (gallery.isPrivate || isInvokerBlocked)
-      throw new Error('Access denied!');
+      throw new AccessDeniedException();
 
     const accessibleMediaFiles = gallery.mediaFiles.filter(
       file =>
@@ -77,7 +82,7 @@ export class GalleryService implements GalleryServiceInterface {
         },
       },
     });
-    if (!gallery) throw new Error("Gallery doesn't exist!");
+    if (!gallery) throw new GalleryDoesntExistException();
 
     return gallery;
   }
@@ -140,7 +145,7 @@ export class GalleryService implements GalleryServiceInterface {
       gallery,
       invoker,
     );
-    if (!doesUserHaveAccess) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new AccessDeniedException();
 
     await this.galleryRepo.update({ id: galleryId }, options);
   }
@@ -154,13 +159,13 @@ export class GalleryService implements GalleryServiceInterface {
       where: { id: fileId },
       relations: { gallery: { owner: true }, blockedUserList: true },
     });
-    if (!file) throw new Error("File doesn't exist!");
+    if (!file) throw new FileDoesntExistException();
 
     const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
       file.gallery,
       invoker,
     );
-    if (!doesUserHaveAccess) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new AccessDeniedException();
 
     const userToBeBlocked = await this.userService.findUserById(userId);
 
@@ -180,13 +185,13 @@ export class GalleryService implements GalleryServiceInterface {
       where: { id: fileId },
       relations: { gallery: { owner: true }, blockedUserList: true },
     });
-    if (!file) throw new Error("File doesn't exist!");
+    if (!file) throw new FileDoesntExistException();
 
     const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
       file.gallery,
       invoker,
     );
-    if (!doesUserHaveAccess) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new AccessDeniedException();
 
     const userToBeAllowedToView = await this.userService.findUserById(userId);
 
@@ -210,7 +215,7 @@ export class GalleryService implements GalleryServiceInterface {
       gallery,
       invoker,
     );
-    if (!doesUserHaveAccess) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new AccessDeniedException();
 
     const userToBeBlocked = await this.userService.findUserById(userId);
 
@@ -241,7 +246,7 @@ export class GalleryService implements GalleryServiceInterface {
       gallery,
       invoker,
     );
-    if (!doesUserHaveAccess) throw new Error('Access denied');
+    if (!doesUserHaveAccess) throw new AccessDeniedException();
 
     const userToBeAllowedToView = await this.userService.findUserById(userId);
 
