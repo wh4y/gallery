@@ -12,7 +12,7 @@ export class AuthService implements AuthServiceInterface {
 
   public async signIn({ email, password }: SignInOptions): Promise<User> {
     const user = await this.userService.findUserByEmail(email, true);
-    if (!user) throw Error('Incorrect password or email!');
+    if (!user) throw new IncorrectPassOrEmailException();
 
     const isPassportValid = await this.comparePasswords(
       password,

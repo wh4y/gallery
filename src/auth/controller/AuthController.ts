@@ -7,6 +7,7 @@ import {
   Post,
   Req,
   Res,
+  UseFilters,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth/AuthService';
 import { SignInDto } from './dto/SignInDto';
@@ -18,7 +19,9 @@ import { RefreshTokenCookie } from './cookie/RefreshTokenCookie';
 import { Request, Response } from 'express';
 import { User } from '../../user/entity/User';
 import { TokenTypes } from '../core/TokenTypes';
+import { AuthExceptionFilter } from './exceptionFilter/AuthExceptionFilter';
 
+@UseFilters(AuthExceptionFilter)
 @Controller('/auth')
 export class AuthController implements AuthControllerInterface {
   constructor(

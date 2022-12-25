@@ -12,6 +12,7 @@ import {
   Req,
   Res,
   UploadedFile,
+  UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
@@ -28,7 +29,9 @@ import { EditGalleryParamsDto } from './dto/EditGalleryParamsDto';
 import { FileInterceptor } from './interceptor/FileInterceptor';
 import { MediaFile } from '../entity/MediaFile';
 import { FileTypes } from '../core/FileTypes';
+import { GalleryExceptionFilter } from './exceptionFilter/GalleryExceptionFilter';
 
+@UseFilters(GalleryExceptionFilter)
 @Controller('/gallery')
 export class GalleryController implements GalleryControllerInterface {
   constructor(
