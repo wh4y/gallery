@@ -4,6 +4,7 @@ import { SignInOptions, SignUpOptions } from './types';
 import { User } from '../../../user/entity/User';
 import { UserService } from '../../../user/service/UserService';
 import * as bcrypt from 'bcrypt';
+import { IncorrectPassOrEmailException } from './exceptions';
 
 @Injectable()
 export class AuthService implements AuthServiceInterface {
@@ -17,7 +18,7 @@ export class AuthService implements AuthServiceInterface {
       password,
       user.password,
     );
-    if (!isPassportValid) throw Error('Incorrect password or email!');
+    if (!isPassportValid) throw new IncorrectPassOrEmailException();
 
     return user;
   }
