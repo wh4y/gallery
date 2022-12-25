@@ -23,9 +23,6 @@ export class AuthService implements AuthServiceInterface {
   }
 
   public async signUp({ email, password, name }: SignUpOptions): Promise<User> {
-    const user = await this.userService.findUserByEmail(email);
-    if (user) throw Error('User already exists!');
-
     const hashedPassword = await this.hashPassword(password);
     await this.userService.addNewUser({
       email,
