@@ -201,4 +201,28 @@ export class GalleryService implements GalleryServiceInterface {
 
     return isInvokerAdmin || isInvokerOwner;
   }
+
+  public async allowGalleryViewingForUser(
+    galleryId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void> {
+    const gallery = await this.findGalleryById(galleryId, {
+      blockedUserList: { blockedUsers: true },
+    });
+
+    const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
+      gallery,
+      invoker,
+    );
+    if (!doesUserHaveAccess) throw new Error('Access denied');
+
+    const userToBeAllowedToView = await this.userService.findUserById(userId);
+
+    await this.galleryBlockedUserListRepo
+      .createQueryBuilder()
+      .relation('blockedUsers')
+      .of(gallery.blockedUserList)
+      .remove(userToBeAllowedToView);
+  }
 }

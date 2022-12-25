@@ -164,4 +164,17 @@ export class GalleryController implements GalleryControllerInterface {
       invoker,
     );
   }
+
+  @Post('/allow-gallery-viewing/:galleryId/for/:userId')
+  public async allowGalleryViewingForUser(
+    @Param('galleryId', new ParseIntPipe()) galleryId: number,
+    @Param('userId', new ParseIntPipe()) userId: number,
+    @AuthedUser() invoker: User,
+  ): Promise<void> {
+    await this.galleryService.allowGalleryViewingForUser(
+      galleryId,
+      userId,
+      invoker,
+    );
+  }
 }

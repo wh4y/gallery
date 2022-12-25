@@ -40,4 +40,10 @@ export interface GalleryServiceInterface {
     userId: number,
     invoker: User,
   ): Promise<void>;
+
+  allowGalleryViewingForUser(
+    galleryId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void>;
 }
