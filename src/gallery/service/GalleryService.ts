@@ -171,6 +171,32 @@ export class GalleryService implements GalleryServiceInterface {
       .add(userToBeBlocked);
   }
 
+  async allowFileViewingForUser(
+    fileId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void> {
+    const file = await this.mediaFileRepo.findOne({
+      where: { id: fileId },
+      relations: { gallery: { owner: true }, blockedUserList: true },
+    });
+    if (!file) throw new Error("File doesn't exist!");
+
+    const doesUserHaveAccess = this.doesUserHaveAccessToGallery(
+      file.gallery,
+      invoker,
+    );
+    if (!doesUserHaveAccess) throw new Error('Access denied');
+
+    const userToBeAllowedToView = await this.userService.findUserById(userId);
+
+    await this.fileBlockedUserListRepo
+      .createQueryBuilder()
+      .relation('blockedUsers')
+      .of(file.blockedUserList)
+      .remove(userToBeAllowedToView);
+  }
+
   public async forbidGalleryViewingForUser(
     galleryId: number,
     userId: number,

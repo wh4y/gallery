@@ -35,6 +35,12 @@ export interface GalleryServiceInterface {
     invoker: User,
   ): Promise<void>;
 
+  allowFileViewingForUser(
+    fileId: number,
+    userId: number,
+    invoker: User,
+  ): Promise<void>;
+
   forbidGalleryViewingForUser(
     galleryId: number,
     userId: number,
